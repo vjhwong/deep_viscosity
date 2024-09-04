@@ -54,8 +54,8 @@ class VideoToFrames:
 
 
 def main():
-    video_path = "data"
-    output_folder = "video_frames"
+    video_path = r"data\raw"
+    output_folder = r"data\processed"
     vtf = VideoToFrames(video_path, output_folder)
     vtf.process_videos_in_directory()
 
