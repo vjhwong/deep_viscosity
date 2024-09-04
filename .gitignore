@@ -1,6 +1,6 @@
 # data
 data/*
-video_frames/*
+video_frames/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
