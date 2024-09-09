@@ -54,8 +54,6 @@ class VideoToFrames:
         video_tensor_path = os.path.join(self._tensor_folder, f"{video_name}.pt")
         self._create_folder(video_jpg_folder)
 
-        self._create_folder(video_jpg_folder)
-
         frame_count = 0
         frames_list = []
 
@@ -108,11 +106,11 @@ class VideoToFrames:
 
 
 def main():
-    video_path = r"data\raw"
-    output_folder = r"data\processed"
+    raw_data_path = "data/raw"
+    processed_data_path = "data/processed"
 
-    vtf = VideoToFrames(video_path, output_folder)
-    vtf.process_videos_in_directory()
+    video_to_frames = VideoToFrames(raw_data_path, processed_data_path)
+    video_to_frames.process_videos_in_directory()
 
 
 if __name__ == "__main__":
