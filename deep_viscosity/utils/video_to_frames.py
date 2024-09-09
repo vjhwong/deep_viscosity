@@ -106,8 +106,8 @@ class VideoToFrames:
 
 
 def main():
-    raw_data_path = "data/raw"
-    processed_data_path = "data/processed"
+    raw_data_path = os.path.join("data", "raw")
+    processed_data_path = os.path.join("data", "processed")
 
     video_to_frames = VideoToFrames(raw_data_path, processed_data_path)
     video_to_frames.process_videos_in_directory()

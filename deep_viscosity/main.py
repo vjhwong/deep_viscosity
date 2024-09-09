@@ -6,7 +6,7 @@ from dataset import Dataset
 
 
 def main():
-    processed_data_path = "data/processed"
+    processed_data_path = os.path.join("data", "processed")
     tensor_data_path = os.path.join(processed_data_path, "tensor")
 
     dataset = Dataset(tensor_data_path, 32)
