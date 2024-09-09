@@ -1,9 +1,9 @@
 import os
 import re
 import torch
-import pillow as PIL
-import torchvision.transforms as transforms
+
 import sklearn.model_selection as ms
+
 from torch.utils.data import DataLoader, TensorDataset
 
 
@@ -21,16 +21,16 @@ class Dataset:
         ) = self._split_data()
 
     def _split_data(self) -> tuple[list]:
-        filenames = []
+        tensors = []
         labels = []
 
-        for filename in os.listdir(self._data_path):
-            viscosity = re.search(r"\d+", filename).group(0)
-            filenames.append(filename)
+        for tensor in os.listdir(self._data_path):
+            viscosity = re.search(r"\d+", tensor).group(0)
+            tensors.append(torch.load(os.path.join(self._data_path, tensor)))
             labels.append(viscosity)
 
         X_train, X_test, y_train, y_test = ms.train_test_split(
-            filenames, labels, test_size=1 / 3, random_state=42
+            tensors, labels, test_size=1 / 3, random_state=42
         )
         X_train, X_val, y_train, y_val = ms.train_test_split(
             X_train, y_train, test_size=1 / 2, random_state=42
