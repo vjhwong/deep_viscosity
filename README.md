@@ -14,9 +14,8 @@ To create a Conda environment using the `environment.yml` file in this repositor
 5. Once the environment creation process is complete, activate the environment using the following command:
 
     ```
-    conda activate <environment_name>
+    conda activate deep_viscosity
     ```
 
-    Replace `<environment_name>` with the name you want to give to your environment.
 
 You have now successfully created and activated the Conda environment using the `environment.yml` file.
