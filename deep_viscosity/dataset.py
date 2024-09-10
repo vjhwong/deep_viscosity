@@ -39,6 +39,11 @@ class Dataset:
         ) = self._split_data()
 
     def _split_data(self) -> tuple[list]:
+        """Split the data into training, validation, and testing sets.
+
+        Returns:
+            tuple[list]: (X_train, X_val, X_test, y_train, y_val, y_test)
+        """
         tensors = []
         labels = []
 
@@ -58,6 +63,11 @@ class Dataset:
         return X_train, X_val, X_test, y_train, y_val, y_test
 
     def create_dataloaders(self) -> tuple[DataLoader]:
+        """Create dataloaders for training, validation, and testing.
+
+        Returns:
+            tuple[DataLoader]: Train, validation, and test dataloaders.
+        """
         X_train_tensor = torch.stack(self._X_train)
         y_train_tensor = torch.tensor(self._y_train)
         train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
