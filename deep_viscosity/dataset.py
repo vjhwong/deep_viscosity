@@ -25,9 +25,12 @@ class Dataset:
         labels = []
 
         for tensor in os.listdir(self._data_path):
-            viscosity = re.search(r"\d+", tensor).group(0)
+            # filenames have the format float_testnumber.pt
+            # we want to extract the float part
+            viscosity = re.search(r"(.*)_\d+", tensor).group(1)
             tensors.append(torch.load(os.path.join(self._data_path, tensor)))
             labels.append(viscosity)
+            print(f"Loaded tensor {tensor} with label {viscosity}")
 
         X_train, X_test, y_train, y_test = ms.train_test_split(
             tensors, labels, test_size=1 / 3, random_state=42
@@ -38,7 +41,6 @@ class Dataset:
         return X_train, X_val, X_test, y_train, y_val, y_test
 
     def create_dataloaders(self) -> tuple[DataLoader]:
-        print(self._X_train)
         X_train_tensor = torch.tensor(self._X_train)
         y_train_tensor = torch.tensor(self._y_train)
         train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
