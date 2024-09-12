@@ -1,89 +1,44 @@
 import os
-import re
 import torch
+import torchvision.transforms as transforms
 
-import sklearn.model_selection as ms
-
-from torch.utils.data import DataLoader, TensorDataset
-from tqdm import tqdm
+from PIL import Image
+from torch.utils.data import Dataset
 
 
-class Dataset:
-    def __init__(
-        self,
-        data_path: str,
-        batch_size: int,
-        test_size: float = 1 / 3,
-        validation_size: float = 1 / 3,
-    ):
-        """Create a dataset object that can be used to create dataloaders for training, validation, and testing.
+class DeepViscosityDataset(Dataset):
+    "Characterizes a dataset for PyTorch"
 
-        Args:
-            data_path (str): Path to the directory containing the tensor data.
-            batch_size (int): Batch size for the dataloaders.
-            test_size (float, optional): Fraction of total data used for test. Defaults to 1/3.
-            validation_size (float, optional): Fraction of total data used for validation. Defaults to 1/2.
-        """
-        self._data_path = data_path
-        self._batch_size = batch_size
-        self._test_size = test_size
-        self._validation_size = (1 / (1 - test_size)) * validation_size
+    def __init__(self, processed_data_path: str, train_folders: list[str], train_labels: str, transform: transforms.Compose = None):
+        "Initialization"
+        self.processed_data_path = processed_data_path
+        self.train_folders = train_folders
+        self.train_labels = train_labels
+        self.transform = transform
 
-        (
-            self._X_train,
-            self._X_val,
-            self._X_test,
-            self._y_train,
-            self._y_val,
-            self._y_test,
-        ) = self._split_data()
+    def __len__(self):
+        "Denotes the total number of samples"
+        return len(self.train_folders)
 
-    def _split_data(self) -> tuple[list]:
-        """Split the data into training, validation, and testing sets.
+    def read_images(self, path: str, folder: str, transform: transforms.Compose):
+        video_tensor = []
+        for image in os.listdir(path.join(self.processed_data_path, folder)):
+            image = Image.open(path.join(self.processed_data_path, folder, image)).convert('L')
 
-        Returns:
-            tuple[list]: (X_train, X_val, X_test, y_train, y_val, y_test)
-        """
-        tensors = []
-        labels = []
+            if transform is not None:
+                image = transform(image)
 
-        for tensor in tqdm(os.listdir(self._data_path)):
-            # filenames have the format float_testnumber.pt
-            # we want to extract the float part
-            viscosity = re.search(r"(.*)_\d+", tensor).group(1)
-            tensors.append(torch.load(os.path.join(self._data_path, tensor)))
-            labels.append(float(viscosity))
+            video_tensor.append(image.squeeze_(0))
 
-        X_train, X_test, y_train, y_test = ms.train_test_split(
-            tensors, labels, test_size=self._test_size, random_state=42
-        )
-        X_train, X_val, y_train, y_val = ms.train_test_split(
-            X_train, y_train, test_size=self._validation_size, random_state=42
-        )
-        return X_train, X_val, X_test, y_train, y_val, y_test
+        video_tensor = torch.stack(video_tensor, dim=0)
 
-    def create_dataloaders(self) -> tuple[DataLoader]:
-        """Create dataloaders for training, validation, and testing.
+        return video_tensor
 
-        Returns:
-            tuple[DataLoader]: Train, validation, and test dataloaders.
-        """
-        X_train_tensor = torch.stack(self._X_train)
-        y_train_tensor = torch.tensor(self._y_train)
-        train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
-        train_loader = DataLoader(
-            train_dataset, batch_size=self._batch_size, shuffle=True
-        )
+    def __getitem__(self, index):
+        "Generates one sample of data"
 
-        X_val_tensor = torch.stack(self._X_val)
-        y_val_tensor = torch.tensor(self._y_val)
-        val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
-        val_loader = DataLoader(val_dataset, batch_size=self._batch_size, shuffle=True)
+        folder = self.train_folders[index]
+        video_tensor = self.read_images(self.processed_data_path, folder, self.transform).unsqueeze_(0)
+        label_tensor = torch.LongTensor([self.train_labels[index]])
 
-        X_test_tensor = torch.stack(self._X_test)
-        y_test_tensor = torch.tensor(self._y_test)
-        test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
-        test_loader = DataLoader(
-            test_dataset, batch_size=self._batch_size, shuffle=True
-        )
-        return train_loader, val_loader, test_loader
+        return video_tensor, label_tensor
