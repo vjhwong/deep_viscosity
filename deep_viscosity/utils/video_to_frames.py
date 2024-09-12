@@ -10,41 +10,37 @@ class VideoCaptureError(Exception):
 
 
 class VideoToFrames:
-    def __init__(self, data_path: str, output_folder: str, n_frames: int) -> None:
+    def __init__(self, raw_data_path: str, output_folder: str, n_frames: int) -> None:
         """Initializes the VideoToFrames class.
 
         Args:
-            data_path (str): Path to the directory containing the video files.
+            raw_data_path (str): Path to the directory containing the video files.
             output_folder (str): Path to the directory where the frames will be saved.
             n_frames (int): Number of frames to extract from each video.
         """
-        self._data_path = data_path
+        self._raw_data_path = raw_data_path
         self._output_folder = output_folder
         self._n_frames = n_frames
 
-        self._jpg_folder = os.path.join(self._output_folder, "jpg")
-        self._tensor_folder = os.path.join(self._output_folder, "tensor")
-        self._create_folder(self._jpg_folder)
-        self._create_folder(self._tensor_folder)
+        self._create_folder(self._output_folder)
 
     ### Public methods ###
 
     def process_videos_in_directory(self) -> None:
         """
         Processes all the video files in the directory.
-        Saves the frames as jpg files and the frames as tensors.
         """
         video_files = [
-            file for file in os.listdir(self._data_path) if file.endswith(".avi")
+            file for file in os.listdir(self._raw_data_path) if file.endswith(".avi")
         ]
         for video_file in video_files:
-            video_path = os.path.join(self._data_path, video_file)
+            video_path = os.path.join(self._raw_data_path, video_file)
             self._video_to_frames(video_path)
 
     ### Private methods ###
 
     def _video_to_frames(self, video_path: str) -> None:
-        """Extracts frames from a video file and saves them as jpg files and as tensors.
+        """Extracts frames from a video file and saves them as jpg files.
 
         Args:
             video_path (str): Path to the video file.
@@ -54,11 +50,8 @@ class VideoToFrames:
             return
 
         video_name = os.path.splitext(os.path.basename(video_path))[0]
-        video_jpg_folder = os.path.join(self._jpg_folder, video_name)
+        video_jpg_folder = os.path.join(self._output_folder, video_name)
         self._create_folder(video_jpg_folder)
-        video_tensor_path = os.path.join(self._tensor_folder, f"{video_name}.pt")
-
-        frames_list = []
 
         total_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         selected_frames = np.linspace(40, total_frames - 20, self._n_frames, dtype=int)
@@ -78,12 +71,7 @@ class VideoToFrames:
             )
             cv2.imwrite(frame_filename, frame)
 
-            frames_tensor = transforms.ToTensor()(frame)
-            frames_list.append(frames_tensor)
-
         vidcap.release()
-        frames_tensor = torch.stack(frames_list)
-        torch.save(frames_tensor, video_tensor_path)
         print(f"Done! Extracted {self._n_frames} frames to {video_jpg_folder}")
 
     def _create_folder(self, _output_folder: str) -> None:
@@ -116,8 +104,7 @@ class VideoToFrames:
 def main():
     raw_data_path = os.path.join("data", "raw")
     processed_data_path = os.path.join("data", "processed")
-
-    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, 20)
+    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, n_frames=20)
     video_to_frames.process_videos_in_directory()
 
 
