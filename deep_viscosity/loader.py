@@ -34,7 +34,7 @@ def create_reg_datasets(
         viscosity = re.search(r"^[\d\.]+(?=_)", filename)
         if viscosity:
             viscosity = viscosity.group()
-            x_list.append(viscosity)
+            x_list.append(filename)
             y_list.append(float(viscosity))
 
     # train, test split

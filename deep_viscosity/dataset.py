@@ -47,9 +47,9 @@ class DeepViscosityDataset(Dataset):
             torch.Tensor: Tensor containing the images.
         """
         video_tensor = []
-        for image in os.listdir(path.join(self.processed_data_path, folder)):
+        for image in os.listdir(os.path.join(self.processed_data_path, folder)):
             image = Image.open(
-                path.join(self.processed_data_path, folder, image)
+                os.path.join(self.processed_data_path, folder, image)
             ).convert("L")
 
             if transform is not None:
@@ -74,6 +74,5 @@ class DeepViscosityDataset(Dataset):
         video_tensor = self.read_images(
             self.processed_data_path, folder, self.transform
         ).unsqueeze_(0)
-        label_tensor = torch.LongTensor([self.train_labels[index]])
-
+        label_tensor = torch.FloatTensor([self.train_labels[index]])
         return video_tensor, label_tensor
