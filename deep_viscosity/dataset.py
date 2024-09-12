@@ -1,34 +1,38 @@
 import os
 import re
 import torch
+import PIL
+from tqdm import tqdm
+from torch.utils.data import DataLoader, TensorDataset
+import torchvision.transforms as transforms
 
 import sklearn.model_selection as ms
 
-from torch.utils.data import DataLoader, TensorDataset
-from tqdm import tqdm
+import utils.transforms as T
 
 
 class Dataset:
     def __init__(
         self,
-        data_path: str,
+        processed_data_path: str,
         batch_size: int,
         test_size: float = 1 / 3,
         validation_size: float = 1 / 3,
+        transform: transforms.Compose = T.transform(),
     ):
         """Create a dataset object that can be used to create dataloaders for training, validation, and testing.
 
         Args:
-            data_path (str): Path to the directory containing the tensor data.
+            data_path (str): Path to the directory containing the frames.
             batch_size (int): Batch size for the dataloaders.
             test_size (float, optional): Fraction of total data used for test. Defaults to 1/3.
             validation_size (float, optional): Fraction of total data used for validation. Defaults to 1/2.
         """
-        self._data_path = data_path
+        self._processed_data_path = processed_data_path
         self._batch_size = batch_size
         self._test_size = test_size
         self._validation_size = (1 / (1 - test_size)) * validation_size
-
+        self._transform = transform
         (
             self._X_train,
             self._X_val,
@@ -47,12 +51,19 @@ class Dataset:
         tensors = []
         labels = []
 
-        for tensor in tqdm(os.listdir(self._data_path)):
-            # filenames have the format float_testnumber.pt
-            # we want to extract the float part
-            viscosity = re.search(r"(.*)_\d+", tensor).group(1)
-            tensors.append(torch.load(os.path.join(self._data_path, tensor)))
+        for folder in tqdm(os.listdir(self._processed_data_path)):
+            viscosity = re.search(r"(.*)_\d+", folder).group(1)
             labels.append(float(viscosity))
+            x_out = []
+            for frame in os.listdir(os.path.join(self._processed_data_path, folder)):
+                # filenames have the format float_testnumber.pt
+                # we want to extract the float part
+                image = PIL.Image.open(
+                    os.path.join(self._processed_data_path, folder, frame)
+                ).convert("L")
+                transformed_image = self._transform(image)
+                x_out.append(transformed_image.squeeze_(0))
+            tensors.append(torch.stack(x_out))
 
         X_train, X_test, y_train, y_test = ms.train_test_split(
             tensors, labels, test_size=self._test_size, random_state=42
@@ -87,3 +98,21 @@ class Dataset:
             test_dataset, batch_size=self._batch_size, shuffle=True
         )
         return train_loader, val_loader, test_loader
+
+
+def main():
+    tensor__processed_data_path = os.path.join("data", "processed", "tensor")
+
+    dataset = Dataset(tensor__processed_data_path, 10)
+    train_loader, val_loader, test_loader = dataset.create_dataloaders()
+
+    # Iterate through DataLoader
+    for batch_idx, (features, labels) in enumerate(train_loader):
+        print(f"Batch {batch_idx + 1}")
+        print("Features:", features.shape)
+        print("Labels:", labels)
+    return
+
+
+if __name__ == "__main__":
+    main()
