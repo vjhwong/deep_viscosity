@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as func
 from utils.functions import conv3d_output_size
@@ -9,10 +10,20 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         t_dim: int,
         img_x: int,
         img_y: int,
-        drop_p: int = 0,
+        dropout: float = 0,
         fc_hidden1: int = 256,
         fc_hidden2: int = 256,
     ) -> None:
+        """Create a 3D CNN model for predicting viscosity.
+
+        Args:
+            t_dim (int): Frame dimension.
+            img_x (int): Resolution in x.
+            img_y (int): Resolution in y.
+            dropout (float): Dropout rate. Defaults to 0.
+            fc_hidden1 (int, optional): Number of nodes in first fully-connected layer. Defaults to 256.
+            fc_hidden2 (int, optional): Number of nodes in first fully-connected layer. Defaults to 256.
+        """
         super().__init__()
         # set video dimension
         self.t_dim = t_dim
@@ -20,7 +31,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         self.img_y = img_y
         # fully connected layer hidden nodes
         self.fc_hidden1, self.fc_hidden2 = fc_hidden1, fc_hidden2
-        self.drop_p = drop_p
+        self.dropout = dropout
         self.ch1, self.ch2 = 32, 48
         self.k1, self.k2 = (5, 5, 5), (3, 3, 3)  # 3d kernel size
         self.s1, self.s2 = (2, 2, 2), (2, 2, 2)  # 3d strides
@@ -49,7 +60,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         )
         self.bn2 = nn.BatchNorm3d(self.ch2)
         self.relu = nn.ReLU(inplace=True)
-        self.drop = nn.Dropout3d(self.drop_p)
+        self.drop = nn.Dropout3d(self.dropout)
         self.pool = nn.MaxPool3d(2)
         # fully connected hidden layer
         self.fc1 = nn.Linear(
@@ -63,7 +74,15 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         # fully connected layer, output = multi-classes
         self.fc3 = nn.Linear(self.fc_hidden2, 1)
 
-    def forward(self, x_3d):
+    def forward(self, x_3d: torch.Tensor) -> torch.Tensor:
+        """Forward pass.
+
+        Args:
+            x_3d (torch.Tensor): Input tensor.
+
+        Returns:
+            torch.Tensor: Output tensor.
+        """
         # Conv 1
         x_out = self.conv1(x_3d)
         x_out = self.bn1(x_out)
@@ -82,7 +101,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         x_out = func.relu(self.fc2(x_out))
 
         # removes neurons randomly while training
-        x_out = func.dropout(x_out, p=self.drop_p, training=self.training)
+        x_out = func.dropout(x_out, p=self.dropout, training=self.training)
 
         x_out = self.fc3(x_out)
         return x_out

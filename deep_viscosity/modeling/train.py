@@ -2,6 +2,7 @@ import torch
 from modeling.deep_viscosity_model import CNN3DVisco
 import torch.nn as nn
 import torch.optim as optim
+import tqdm
 
 
 def train(model: nn.Module, data_loader: torch.utils.data.DataLoader) -> None:
@@ -22,7 +23,7 @@ def train(model: nn.Module, data_loader: torch.utils.data.DataLoader) -> None:
     model.train()
 
     # Training loop
-    for epoch in range(num_epochs):
+    for epoch in tqdm(range(num_epochs)):
         for batch_idx, (inputs, targets) in enumerate(data_loader):
             inputs = inputs.to(device)
             targets = targets.to(device)
@@ -38,10 +39,10 @@ def train(model: nn.Module, data_loader: torch.utils.data.DataLoader) -> None:
             optimizer.step()
 
             # Print loss every 10 batches
-            if (batch_idx + 1) % 10 == 0:
-                print(
-                    f"Epoch [{epoch+1}/{num_epochs}], Batch [{batch_idx+1}/{len(data_loader)}], Loss: {loss.item()}"
-                )
+            # if (batch_idx + 1) % 10 == 0:
+            #     print(
+            #         f"Epoch [{epoch+1}/{num_epochs}], Batch [{batch_idx+1}/{len(data_loader)}], Loss: {loss.item()}"
+            #     )
 
     # Save the trained model
     torch.save(model.state_dict(), "trained_model.pth")
