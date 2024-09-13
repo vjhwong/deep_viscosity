@@ -4,7 +4,7 @@ from modelling.model import CNN3DVisco
 from modelling.train import train
 
 
-def main():
+def main() -> None:
     processed_data_path = os.path.join("data", "processed")
     train_loader, test_loader, valid_loader = create_reg_datasets(
         batch_size=8, processed_data_path=processed_data_path
