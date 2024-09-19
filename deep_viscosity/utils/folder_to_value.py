@@ -1,62 +1,114 @@
-import matplotlib.pyplot as plt
 import os
 import numpy as np
 from scipy import interpolate
 
-percent = [0, 10,20,30,40,50,60, 65, 67,70,75, 80,85,90,91,92,93,94,95,96,97,98,99 ,100]
-viscosity = [1.005, 1.31, 1.76, 2.60, 3.72, 6.00, 10.8, 15.2, 17.7, 22.5, 35.5, 60.1, 109, 219, 259, 310, 367, 437, 523, 624, 765, 939, 1150, 1412]
 
-interpolated_viscosities = [82.5, 86, 87, 88, 89, 90.5, 91.5, 92.5, 93.5, 94.5, 95.5, 96.5, 97.5]
+def find_interpolated_viscosities():
+    percentages = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        65,
+        67,
+        70,
+        75,
+        80,
+        85,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+    ]
+    viscosities = [
+        1.005,
+        1.31,
+        1.76,
+        2.60,
+        3.72,
+        6.00,
+        10.8,
+        15.2,
+        17.7,
+        22.5,
+        35.5,
+        60.1,
+        109,
+        219,
+        259,
+        310,
+        367,
+        437,
+        523,
+        624,
+        765,
+        939,
+        1150,
+        1412,
+    ]
 
-plt.scatter(percent, viscosity)
-#create interpolation for the data
+    interpolated_percentages = [
+        82.5,
+        86,
+        87,
+        88,
+        89,
+        90.5,
+        91.5,
+        92.5,
+        93.5,
+        94.5,
+        95.5,
+        96.5,
+        97.5,
+    ]
+
+    x = np.array(percentages)
+    y = np.array(viscosities)
+
+    f = interpolate.interp1d(x, y, kind="cubic")
+    interpolated_viscosities = f(interpolated_percentages)
+
+    percentages_all = percentages + interpolated_percentages
+    percentages_all.sort()
+
+    viscosities_all = viscosities + interpolated_viscosities.tolist()
+    viscosities_all.sort()
+
+    return percentages_all, viscosities_all
 
 
-x = np.array(percent)
-y = np.array(viscosity)
+def rename_videos(percentages, viscosities):
+    old_name_to_new_name = {}
+    for percent, viscosity in zip(percentages, viscosities):
+        old_name_to_new_name["P" + str(percent)] = str(round(viscosity, 2))
 
-f = interpolate.interp1d(x, y, kind='cubic')
+    raw_data_path = "data/raw"
+    for file in os.listdir(raw_data_path):
+        if "P" in file:
+            old_label = file.split("_", 1)
+            old_file_name = os.path.join(raw_data_path, file)
+            new_file_name = os.path.join(
+                raw_data_path, old_name_to_new_name[old_label[0]] + "_" + old_label[1]
+            )
 
-xnew = np.linspace(0, 100, num=1000, endpoint=True)
-ynew = f(xnew)
-# interpolated_viscosities = f(np.array(interpolated_viscosities))
-plt.plot(x, y, 'o', xnew, ynew, '-')
-plt.plot(interpolated_viscosities, f(np.array(interpolated_viscosities)), 'x')
-# plt.plot(x, y, 'o', xnew, ynew, '-')
-plt.xlabel('Glycogen (Wt %)')
-plt.ylabel('Viscosity (cP)')
-plt.grid(True)
-# plt.show()
-
-print(f"Interpolated viscosities: {f(interpolated_viscosities)}")
-
-percent_all = percent + interpolated_viscosities
-percent_all.sort()
-
-viscosity_all = viscosity + f(interpolated_viscosities).tolist()
-viscosity_all.sort()
-dic = {}
+            os.rename(old_file_name, new_file_name)
 
 
-for percent, viscosity in zip(percent_all, viscosity_all):
-
-    dic["P" + str(percent)] = round(viscosity, 2)
-
-print(dic)
+def main():
+    percentages, viscosities = find_interpolated_viscosities()
+    rename_videos(percentages, viscosities)
 
 
-    
-    
-
-
-
-# Change the directory to the specific folder
-# path = '/content/drive/My Drive/Regression_Dataset/rgb'
-
-# path = "fokder with new data"
-
-
-
-# for file in os.listdir(path):
-#   old_label = file.split('_', 1)
-#   os.rename(file, dic[old_label[0]] + '_' + old_label[1])
+if __name__ == "__main__":
+    main()
