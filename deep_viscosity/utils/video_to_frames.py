@@ -4,10 +4,8 @@ import torch
 import numpy as np
 from torchvision import transforms
 
-
 class VideoCaptureError(Exception):
     pass
-
 
 class VideoToFrames:
     def __init__(self, raw_data_path: str, output_folder: str, n_frames: int) -> None:
@@ -26,7 +24,7 @@ class VideoToFrames:
 
     ### Public methods ###
 
-    def process_videos_in_directory(self) -> None:
+    def process_videos_in_directory(self, tilt: bool) -> None:
         """
         Processes all the video files in the directory.
         """
@@ -35,16 +33,20 @@ class VideoToFrames:
         ]
         for video_file in video_files:
             video_path = os.path.join(self._raw_data_path, video_file)
-            self._video_to_frames(video_path)
+            if tilt: 
+                self._video_to_frames_tilt(video_path)
 
     ### Private methods ###
-
-    def _video_to_frames(self, video_path: str) -> None:
+    def _video_to_frames_tilt(self, video_path: str) -> None:
         """Extracts frames from a video file and saves them as jpg files.
 
         Args:
             video_path (str): Path to the video file.
         """
+        if "TILT" not in video_path:
+            return
+        
+        
         vidcap = cv2.VideoCapture(video_path)
         if not self._check_vidcap(vidcap):
             return
@@ -54,7 +56,8 @@ class VideoToFrames:
         self._create_folder(video_jpg_folder)
 
         total_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-        selected_frames = np.linspace(40, total_frames - 20, self._n_frames, dtype=int)
+
+        selected_frames = range(int(round(total_frames*0.45, 0)), int(round(total_frames*0.45, 0) + self._n_frames))
 
         for frame_index in range(total_frames):
             success, frame = vidcap.read()
@@ -64,7 +67,6 @@ class VideoToFrames:
             if frame_index not in selected_frames:
                 continue
 
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # NOTE: if it is desired that the length of each file name is the same, then the following line should be modified
             frame_filename = os.path.join(
                 video_jpg_folder, f"frame{frame_index:01d}.jpg"
@@ -104,8 +106,8 @@ class VideoToFrames:
 def main():
     raw_data_path = os.path.join("data", "raw")
     processed_data_path = os.path.join("data", "processed")
-    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, n_frames=20)
-    video_to_frames.process_videos_in_directory()
+    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, n_frames=55)
+    video_to_frames.process_videos_in_directory(tilt = True)
 
 
 if __name__ == "__main__":
