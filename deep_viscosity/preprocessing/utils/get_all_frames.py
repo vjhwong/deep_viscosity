@@ -4,8 +4,10 @@ import torch
 import numpy as np
 from torchvision import transforms
 
+
 class VideoCaptureError(Exception):
     pass
+
 
 class VideoToFrames:
     def __init__(self, raw_data_path: str, output_folder: str) -> None:
@@ -41,8 +43,7 @@ class VideoToFrames:
         Args:
             video_path (str): Path to the video file.
         """
-        
-        
+
         vidcap = cv2.VideoCapture(video_path)
         if not self._check_vidcap(vidcap):
             return
@@ -68,7 +69,6 @@ class VideoToFrames:
             cv2.imwrite(frame_filename, frame)
 
         vidcap.release()
-        print(f"Done! Extracted {self._n_frames} frames to {video_jpg_folder}")
 
     def _create_folder(self, _output_folder: str) -> None:
         """Creates a folder if it does not aldready exist.
@@ -99,7 +99,7 @@ class VideoToFrames:
 
 def main():
     raw_data_path = os.path.join("data", "raw")
-    processed_data_path = os.path.join("data", "processed")
+    processed_data_path = os.path.join("data", "all_frames")
     video_to_frames = VideoToFrames(raw_data_path, processed_data_path)
     video_to_frames.process_videos_in_directory()
 
