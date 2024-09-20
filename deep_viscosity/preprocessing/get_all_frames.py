@@ -8,7 +8,7 @@ class VideoCaptureError(Exception):
     pass
 
 class VideoToFrames:
-    def __init__(self, raw_data_path: str, output_folder: str, n_frames: int) -> None:
+    def __init__(self, raw_data_path: str, output_folder: str) -> None:
         """Initializes the VideoToFrames class.
 
         Args:
@@ -18,13 +18,12 @@ class VideoToFrames:
         """
         self._raw_data_path = raw_data_path
         self._output_folder = output_folder
-        self._n_frames = n_frames
 
         self._create_folder(self._output_folder)
 
     ### Public methods ###
 
-    def process_videos_in_directory(self, tilt: bool) -> None:
+    def process_videos_in_directory(self) -> None:
         """
         Processes all the video files in the directory.
         """
@@ -33,18 +32,15 @@ class VideoToFrames:
         ]
         for video_file in video_files:
             video_path = os.path.join(self._raw_data_path, video_file)
-            if tilt: 
-                self._video_to_frames_tilt(video_path)
+            self._video_to_frames(video_path)
 
     ### Private methods ###
-    def _video_to_frames_tilt(self, video_path: str) -> None:
+    def _video_to_frames(self, video_path: str) -> None:
         """Extracts frames from a video file and saves them as jpg files.
 
         Args:
             video_path (str): Path to the video file.
         """
-        if "TILT" not in video_path:
-            return
         
         
         vidcap = cv2.VideoCapture(video_path)
@@ -57,15 +53,13 @@ class VideoToFrames:
 
         total_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        selected_frames = range(int(round(total_frames*0.45, 0)), int(round(total_frames*0.45, 0) + self._n_frames))
-
         for frame_index in range(total_frames):
             success, frame = vidcap.read()
 
             if not success:
                 break
-            if frame_index not in selected_frames:
-                continue
+            # if frame_index not in selected_frames:
+            #     continue
 
             # NOTE: if it is desired that the length of each file name is the same, then the following line should be modified
             frame_filename = os.path.join(
@@ -106,8 +100,8 @@ class VideoToFrames:
 def main():
     raw_data_path = os.path.join("data", "raw")
     processed_data_path = os.path.join("data", "processed")
-    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, n_frames=55)
-    video_to_frames.process_videos_in_directory(tilt = True)
+    video_to_frames = VideoToFrames(raw_data_path, processed_data_path)
+    video_to_frames.process_videos_in_directory()
 
 
 if __name__ == "__main__":
