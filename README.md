@@ -1,5 +1,6 @@
 # deep_viscosity
 
+**Setting up a virtual environment**
 To create a Conda environment using the `environment.yml` file in this repository, follow these steps:
 
 1. Open a terminal or command prompt.
@@ -19,3 +20,15 @@ To create a Conda environment using the `environment.yml` file in this repositor
 
 
 You have now successfully created and activated the Conda environment using the `environment.yml` file.
+
+
+
+**Prepare the data**
+Run: 
+1. `clean_raw_data.py`
+2. `rename_data_files.py`
+3. `mask_frames.py`
+4. `frame_selection.py`
+
+
+
