@@ -45,7 +45,7 @@ def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
 
     cap.release()
 
-    video_name = os.path.basename(video_path).split(".")[0]
+    video_name = get_video_name(video_path)
     masked_frames_folder_path = os.path.join(output_folder_path, video_name)
     os.makedirs(masked_frames_folder_path)
 
@@ -59,6 +59,21 @@ def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
             masked_frames_folder_path, f"masked_frame_{index}.jpg"
         )
         cv2.imwrite(output_path, masked_frame)
+
+
+def get_video_name(video_path: str) -> str:
+    """Get the name of the video from the video path.
+
+    Args:
+        video_path (str): Path to the video file.
+
+    Returns:
+        str: Name of the video.
+    """
+    split_path = os.path.basename(video_path).split(".")
+    if len(split_path) == 3:
+        return split_path[0] + "." + split_path[1]
+    return split_path[0]
 
 
 def main():
