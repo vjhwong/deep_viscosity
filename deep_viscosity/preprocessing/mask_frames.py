@@ -20,9 +20,8 @@ def mask_videos(video_folder_path: str, mask_path: str):
 
     # Iterate over all video files in the folder
     for video_file in os.listdir(video_folder_path):
-        if "TILT_GREEN" in video_file:
-            video_path = os.path.join(video_folder_path, video_file)
-            mask_frames(video_path, masks, output_folder_path)
+        video_path = os.path.join(video_folder_path, video_file)
+        mask_frames(video_path, masks, output_folder_path)
 
 
 def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):

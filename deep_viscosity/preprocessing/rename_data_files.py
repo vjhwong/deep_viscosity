@@ -99,7 +99,7 @@ def rename_videos(percentages, viscosities):
             old_label = file.split("_", 1)
             old_file_name = os.path.join(raw_data_path, file)
             new_file_name = os.path.join(
-                raw_data_path, old_name_to_new_name[old_label[0]] + "_" + old_label[1]
+                raw_data_path, old_name_to_new_name[old_label[0]] + old_label[1]
             )
 
             os.rename(old_file_name, new_file_name)
