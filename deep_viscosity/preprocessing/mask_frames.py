@@ -4,6 +4,13 @@ import numpy as np
 
 
 def mask_videos(video_folder_path: str, mask_path: str):
+    """Mask all frames in all videos in the folder with the mask provided and save them in a new folder.
+
+    Args:
+        video_folder_path (str): Path to the folder containing the videos.
+        mask_path (str): Path to the mask file.
+    """
+
     output_folder_path = os.path.join("data", "masked")
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
@@ -19,6 +26,13 @@ def mask_videos(video_folder_path: str, mask_path: str):
 
 
 def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
+    """Mask all frames in the video with the mask provided and save them in a new folder.
+
+    Args:
+        video_path (str): Path to the video file.
+        masks (np.ndarray): Masks to apply to the frames.
+        output_folder_path (str): Path to the folder where the masked frames will be saved.
+    """
     cap = cv2.VideoCapture(video_path)
 
     frames = []
@@ -49,7 +63,7 @@ def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
 
 def main():
     video_folder_path = os.path.join("data", "raw")
-    mask_path = os.path.join("masks.npy")
+    mask_path = os.path.join("data", "masks.npy")
 
     mask_videos(video_folder_path, mask_path)
 
