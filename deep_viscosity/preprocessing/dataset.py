@@ -75,5 +75,5 @@ class DeepViscosityDataset(Dataset):
         """
         folder = self.folder_list[index]
         data_tensor = self.read_images(folder, self.transform).unsqueeze_(0)
-        label_tensor = torch.FloatTensor(self.get_viscosity(folder))
+        label_tensor = torch.tensor(self.get_viscosity(folder)).unsqueeze_(0)
         return data_tensor, label_tensor

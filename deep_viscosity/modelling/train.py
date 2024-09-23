@@ -46,10 +46,6 @@ def train(
             optimizer.zero_grad()
             train_loss.backward()
             optimizer.step()
-
-            # Print loss every 10 batches
-            # if (batch_idx + 1) % 10 == 0:
-            #     print(f"Batch [{batch_idx+1}/{len(train_loader)}], Loss: {loss.item()}")
     
         #here starts the code for the validation
         train_loss /= len(train_loader)
