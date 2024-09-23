@@ -1,7 +1,8 @@
 import sys
 import os
 import argparse
-from deep_viscosity.loader import create_reg_datasets
+
+from deep_viscosity.loader import create_dataloaders
 from deep_viscosity.modelling.model import CNN3DVisco
 from deep_viscosity.modelling.train import train
 
@@ -41,7 +42,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load dataset
-    train_loader, val_loader = create_reg_datasets(
+    train_loader, val_loader = create_dataloaders(
         args.data_path, args.batch_size, args.test_size, args.val_size
     )
 
