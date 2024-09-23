@@ -44,7 +44,7 @@ def train(
     model.train()
 
     for epoch in tqdm(range(num_epochs)):
-        for batch_idx, (inputs, targets) in enumerate(train_loader):
+        for _, (inputs, targets) in enumerate(train_loader):
             inputs = inputs.to(device)
             targets = targets.to(device)
 
