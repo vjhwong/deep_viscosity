@@ -24,7 +24,7 @@ def test(model: torch.nn.Module, test_loader: torch.utils.data.DataLoader)-> Non
             outputs = model(inputs)
             
             loss = criterion(outputs, targets.float())
-            test_loss += loss.item() ## denna fattar jag ej
+            test_loss += loss.item()
             all_targets.append(targets.cpu())  
             all_outputs.append(outputs.cpu())  
         
@@ -33,8 +33,8 @@ def test(model: torch.nn.Module, test_loader: torch.utils.data.DataLoader)-> Non
     
     print(f"Test Loss (MSE): {avg_test_loss:.4f}")
     
-    all_targets = torch.cat(all_targets).numpy()  # Convert to a NumPy array
-    all_outputs = torch.cat(all_outputs).numpy()  # Convert to a NumPy array
+    all_targets = torch.cat(all_targets).numpy()
+    all_outputs = torch.cat(all_outputs).numpy()
     
 
     # Create scatter plot
