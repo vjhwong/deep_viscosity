@@ -1,8 +1,8 @@
 import os
-import torch
-import torchvision.transforms as transforms
 
+import torch
 from PIL import Image
+import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 
 
@@ -12,30 +12,25 @@ class DeepViscosityDataset(Dataset):
     def __init__(
         self,
         processed_data_path: str,
-        train_folders: list[str],
-        train_labels: str,
+        folder_list: list[str],
         transform: transforms.Compose = None,
     ):
         """Initializes the DeepViscosityDataset class.
 
         Args:
             processed_data_path (str): Path to the directory containing the processed data.
-            train_folders (list[str]): List of folders containing the training data.
-            train_labels (str): List of labels for the training data.
+            folder_list (list[str]): List of files to use for the dataset.
             transform (transforms.Compose, optional): Transforms used on images. Defaults to None.
         """
         self.processed_data_path = processed_data_path
-        self.train_folders = train_folders
-        self.train_labels = train_labels
+        self.folder_list = folder_list
         self.transform = transform
 
     def __len__(self):
         "Denotes the total number of samples"
-        return len(self.train_folders)
+        return len(self.folder_list)
 
-    def read_images(
-        self, path: str, folder: str, transform: transforms.Compose
-    ) -> torch.Tensor:
+    def read_images(self, folder: str, transform: transforms.Compose) -> torch.Tensor:
         """Reads images from a folder and applies the specified transforms.
 
         Args:
@@ -48,18 +43,26 @@ class DeepViscosityDataset(Dataset):
         """
         video_tensor = []
         for image in os.listdir(os.path.join(self.processed_data_path, folder)):
-            image = Image.open(
-                os.path.join(self.processed_data_path, folder, image)
-            ).convert("L")
+            image_path = os.path.join(self.processed_data_path, folder, image)
+            image = Image.open(image_path).convert("L")
 
             if transform is not None:
                 image = transform(image)
 
             video_tensor.append(image.squeeze_(0))
 
-        video_tensor = torch.stack(video_tensor, dim=0)
+        return torch.stack(video_tensor, dim=0)
 
-        return video_tensor
+    def get_viscosity(self, folder: str) -> float:
+        """Gets the viscosity value from a folder name.
+
+        Args:
+            folder (str): Folder name containing the viscosity value.
+
+        Returns:
+            float: Viscosity value.
+        """
+        return float(folder.split("_")[0])
 
     def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
         """Generates one sample of data.
@@ -68,11 +71,9 @@ class DeepViscosityDataset(Dataset):
             index (int): Index of the sample to retrieve.
 
         Returns:
-            tuple[torch.Tensor, torch.Tensor]: Tuple containing the video tensor and label tensor.
+            tuple[torch.Tensor, torch.Tensor]: Tuple containing the data tensor and label tensor.
         """
-        folder = self.train_folders[index]
-        video_tensor = self.read_images(
-            self.processed_data_path, folder, self.transform
-        ).unsqueeze_(0)
-        label_tensor = torch.FloatTensor([self.train_labels[index]])
-        return video_tensor, label_tensor
+        folder = self.folder_list[index]
+        data_tensor = self.read_images(folder, self.transform).unsqueeze_(0)
+        label_tensor = torch.FloatTensor(self.get_viscosity(folder))
+        return data_tensor, label_tensor

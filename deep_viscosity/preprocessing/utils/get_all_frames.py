@@ -10,7 +10,7 @@ class VideoCaptureError(Exception):
 
 
 class VideoToFrames:
-    def __init__(self, raw_data_path: str, output_folder: str, n_frames: int) -> None:
+    def __init__(self, raw_data_path: str, output_folder: str) -> None:
         """Initializes the VideoToFrames class.
 
         Args:
@@ -20,7 +20,6 @@ class VideoToFrames:
         """
         self._raw_data_path = raw_data_path
         self._output_folder = output_folder
-        self._n_frames = n_frames
 
         self._create_folder(self._output_folder)
 
@@ -38,13 +37,13 @@ class VideoToFrames:
             self._video_to_frames(video_path)
 
     ### Private methods ###
-
     def _video_to_frames(self, video_path: str) -> None:
         """Extracts frames from a video file and saves them as jpg files.
 
         Args:
             video_path (str): Path to the video file.
         """
+
         vidcap = cv2.VideoCapture(video_path)
         if not self._check_vidcap(vidcap):
             return
@@ -54,17 +53,15 @@ class VideoToFrames:
         self._create_folder(video_jpg_folder)
 
         total_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-        selected_frames = np.linspace(40, total_frames - 20, self._n_frames, dtype=int)
 
         for frame_index in range(total_frames):
             success, frame = vidcap.read()
 
             if not success:
                 break
-            if frame_index not in selected_frames:
-                continue
+            # if frame_index not in selected_frames:
+            #     continue
 
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # NOTE: if it is desired that the length of each file name is the same, then the following line should be modified
             frame_filename = os.path.join(
                 video_jpg_folder, f"frame{frame_index:01d}.jpg"
@@ -72,7 +69,6 @@ class VideoToFrames:
             cv2.imwrite(frame_filename, frame)
 
         vidcap.release()
-        print(f"Done! Extracted {self._n_frames} frames to {video_jpg_folder}")
 
     def _create_folder(self, _output_folder: str) -> None:
         """Creates a folder if it does not aldready exist.
@@ -103,8 +99,8 @@ class VideoToFrames:
 
 def main():
     raw_data_path = os.path.join("data", "raw")
-    processed_data_path = os.path.join("data", "processed")
-    video_to_frames = VideoToFrames(raw_data_path, processed_data_path, n_frames=20)
+    processed_data_path = os.path.join("data", "all_frames")
+    video_to_frames = VideoToFrames(raw_data_path, processed_data_path)
     video_to_frames.process_videos_in_directory()
 
 
