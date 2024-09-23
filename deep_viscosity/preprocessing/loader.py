@@ -3,12 +3,13 @@ from typing import Tuple
 from _typeshed import StrPath
 
 import numpy as np
+import pandas as pd
 from torch.utils.data.dataloader import DataLoader
-from torch.utils.data.sampler import SubsetRandomSampler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit
 
-from dataset import DeepViscosityDataset
-from utils.transforms import transform
+from preprocessing.dataset import DeepViscosityDataset
+from preprocessing.utils.transforms import transform
+from preprocessing.utils.enums import ViscosityClass
 
 
 def create_dataloaders(
@@ -26,23 +27,40 @@ def create_dataloaders(
         validation_size (float, optional): validation size. Defaults to 0.2.
         test_size (float, optional): test size. Defaults to 0.2.
     """
-    viscosity_groups = {}
+    viscosity_df = pd.DataFrame(columns=["folder_name", "classification"])
 
-    # filename structure: [viscosity value]_[video number]
-    for filename in os.listdir(processed_data):
-        viscosity = float(filename.split("_")[0])
-        if viscosity not in viscosity_groups:
-            viscosity_groups[viscosity] = []
-        # viscosity groups structure: {viscosity: [video1, video2, ..., videoN]}
-        viscosity_groups[viscosity].append(filename)
+    # folder_name structure: [viscosity value]_[video number]
+    for folder_name in os.listdir(processed_data):
+        viscosity = float(folder_name.split("_")[0])
+        viscosity_df = viscosity_df.append(
+            {
+                "folder_name": folder_name,
+                "classification": get_classification(viscosity),
+            },
+            ignore_index=True,
+        )
 
-    unique_viscosities = np.array(list(viscosity_groups.keys()))
-    X_temp, X_test = train_test_split(unique_viscosities, test_size=test_size)
-    X_train, X_val = train_test_split(X_temp, test_size=validation_size)
+    split_test = StratifiedShuffleSplit(
+        n_splits=1, test_size=test_size, random_state=42
+    )
+    for train_val_index, test_index in split_test.split(
+        viscosity_df, viscosity_df["classification"]
+    ):
+        X_train_val = viscosity_df.loc[train_val_index]
+        X_test = viscosity_df.loc[test_index]
 
-    train_folders = get_viscosity_folders(X_train, viscosity_groups)
-    val_folders = get_viscosity_folders(X_val, viscosity_groups)
-    test_folders = get_viscosity_folders(X_test, viscosity_groups)
+    split_val = StratifiedShuffleSplit(
+        n_splits=1, test_size=validation_size, random_state=42
+    )
+    for train_index, val_index in split_val.split(
+        X_train_val, X_train_val["classification"]
+    ):
+        X_train = X_train_val.loc[train_index]
+        X_val = X_train_val.loc[val_index]
+
+    train_folders = X_train["folder_name"].tolist()
+    val_folders = X_val["folder_name"].tolist()
+    test_folders = X_test["folder_name"].tolist()
 
     transform_function = transform()
 
@@ -63,19 +81,18 @@ def create_dataloaders(
     return train_loader, test_loader, val_loader
 
 
-def get_viscosity_folders(
-    viscosities: list[str], viscosity_groups: dict[float : list[str]]
-) -> list[str]:
-    """Gets the all folders for a given list of viscosities.
+def get_classification(viscosity: float) -> str:
+    """Get the classification of the viscosity value.
 
     Args:
-        unique_viscosities (list[str]): List of viscosities to get.
-        viscosity_groups (dict[float : list[str]]): Dictionary containing the viscosity groups.
+        viscosity (float): Viscosity value.
 
     Returns:
-        list[str]: List of files for the given viscosities.
+        str: Classification of the viscosity value.
     """
-    files = []
-    for viscosity in viscosities:
-        files.extend(viscosity_groups[viscosity])
-    return files
+    if viscosity < 200:
+        return ViscosityClass.LOW.value
+    elif viscosity < 500:
+        return ViscosityClass.MEDIUM.value
+    else:
+        return ViscosityClass.HIGH.value
