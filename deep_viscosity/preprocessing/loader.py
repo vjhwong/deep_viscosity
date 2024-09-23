@@ -1,6 +1,6 @@
 import os
-import re
 from typing import Tuple
+from _typeshed import StrPath
 
 import numpy as np
 from torch.utils.data.dataloader import DataLoader
@@ -11,60 +11,71 @@ from dataset import DeepViscosityDataset
 from utils.transforms import transform
 
 
-def create_reg_datasets(
+def create_dataloaders(
     batch_size: int,
-    processed_data_path: str,
+    processed_data: StrPath,
     validation_size: float = 0.2,
     test_size: float = 0.2,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create the training, testing and validation data loaders for training
-    regression models. Note that the each training video is stored inside a
-    folder with the folder named with its corresponding viscosity value.
+    regression models.
 
     Args:
         batch_size (int): batch size used for training the model
-        processed_data_path (str): path to processed folder
+        processed_data (StrPath): path to processed folder
         validation_size (float, optional): validation size. Defaults to 0.2.
         test_size (float, optional): test size. Defaults to 0.2.
     """
-    x_list = []
-    y_list = []
+    viscosity_groups = {}
 
-    for filename in os.listdir(processed_data_path):
-        viscosity = re.search(r"^[\d\.]+(?=_)", filename)
-        if viscosity:
-            viscosity = viscosity.group()
-            x_list.append(filename)
-            y_list.append(float(viscosity))
+    # filename structure: [viscosity value]_[video number]
+    for filename in os.listdir(processed_data):
+        viscosity = float(filename.split("_")[0])
+        if viscosity not in viscosity_groups:
+            viscosity_groups[viscosity] = []
+        # viscosity groups structure: {viscosity: [video1, video2, ..., videoN]}
+        viscosity_groups[viscosity].append(filename)
 
-    # train, test split
-    train_list, test_list, train_label, test_label = train_test_split(
-        x_list, y_list, test_size=test_size, random_state=0
-    )
+    unique_viscosities = np.array(list(viscosity_groups.keys()))
+    X_temp, X_test = train_test_split(unique_viscosities, test_size=test_size)
+    X_train, X_val = train_test_split(X_temp, test_size=validation_size)
+
+    train_folders = get_viscosity_folders(X_train, viscosity_groups)
+    val_folders = get_viscosity_folders(X_val, viscosity_groups)
+    test_folders = get_viscosity_folders(X_test, viscosity_groups)
+
     transform_function = transform()
+
     train_set = DeepViscosityDataset(
-        processed_data_path, train_list, train_label, transform=transform_function
+        processed_data, train_folders, transform=transform_function
+    )
+    val_set = DeepViscosityDataset(
+        processed_data, val_folders, transform=transform_function
     )
     test_set = DeepViscosityDataset(
-        processed_data_path, test_list, test_label, transform=transform_function
+        processed_data, test_folders, transform=transform_function
     )
 
-    # split into training and validation batches
-    num_train = len(train_set)
-    indices = list(range(num_train))
-    np.random.shuffle(indices)
-    split = int(np.floor(validation_size * num_train))
-    train_idx, valid_idx = indices[split:], indices[:split]
-    train_sampler = SubsetRandomSampler(train_idx)
-    valid_sampler = SubsetRandomSampler(valid_idx)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
 
-    # loading train, validation and test data
-    train_loader = DataLoader(
-        train_set, batch_size=batch_size, sampler=train_sampler, num_workers=0
-    )
-    valid_loader = DataLoader(
-        train_set, batch_size=batch_size, sampler=valid_sampler, num_workers=0
-    )
-    test_loader = DataLoader(test_set, batch_size=batch_size, num_workers=0)
+    return train_loader, test_loader, val_loader
 
-    return train_loader, test_loader, valid_loader
+
+def get_viscosity_folders(
+    viscosities: list[str], viscosity_groups: dict[float : list[str]]
+) -> list[str]:
+    """Gets the all folders for a given list of viscosities.
+
+    Args:
+        unique_viscosities (list[str]): List of viscosities to get.
+        viscosity_groups (dict[float : list[str]]): Dictionary containing the viscosity groups.
+
+    Returns:
+        list[str]: List of files for the given viscosities.
+    """
+    files = []
+    for viscosity in viscosities:
+        files.extend(viscosity_groups[viscosity])
+    return files
