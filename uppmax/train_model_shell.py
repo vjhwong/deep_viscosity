@@ -1,9 +1,9 @@
 import sys
 import os
 import argparse
-from loader import create_reg_datasets
-from modelling.model import CNN3DVisco
-from modelling.train import train
+from deep_viscosity.loader import create_reg_datasets
+from deep_viscosity.modelling.model import CNN3DVisco
+from deep_viscosity.modelling.train import train
 
 
 def main() -> None:
