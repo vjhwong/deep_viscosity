@@ -2,7 +2,6 @@ import os
 from typing import Tuple
 from _typeshed import StrPath
 
-import numpy as np
 import pandas as pd
 from torch.utils.data.dataloader import DataLoader
 from sklearn.model_selection import StratifiedShuffleSplit
