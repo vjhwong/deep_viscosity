@@ -65,7 +65,7 @@ def train(
 
         with torch.no_grad():
 
-            for batch_idx, (val_inputs, val_targets) in val_loader:
+            for val_inputs, val_targets in val_loader:
                 val_inputs = val_inputs.to(device)
                 val_targets = val_targets.to(device)
 
