@@ -3,7 +3,7 @@ from typing import Tuple
 
 import pandas as pd
 from torch.utils.data.dataloader import DataLoader
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
 
 from deep_viscosity.preprocessing.dataset import DeepViscosityDataset
 from deep_viscosity.preprocessing.utils.transforms import transform
@@ -43,24 +43,19 @@ def create_dataloaders(
         )
     viscosity_df = pd.DataFrame(viscosity_data)
     unique_viscosity_df = pd.DataFrame(unique_viscosity_values)
-    split_test = StratifiedShuffleSplit(
-        n_splits=1, test_size=test_size, random_state=42
-    )
-    for train_val_index, test_index in split_test.split(
-        unique_viscosity_df, unique_viscosity_df["classification"]
-    ):
-        train_val_viscosities = unique_viscosity_df.loc[train_val_index]
-        test_viscosities = unique_viscosity_df.loc[test_index]
 
-    split_val = StratifiedShuffleSplit(
-        n_splits=1, test_size=validation_size, random_state=42
+    temp_df, test_viscosities = train_test_split(
+        unique_viscosity_df,
+        test_size=test_size,
+        stratify=unique_viscosity_df["classification"],
+        random_state=42,
     )
-    train_val_viscosities = train_val_viscosities.reset_index(drop=True)
-    for train_index, val_index in split_val.split(
-        train_val_viscosities, train_val_viscosities["classification"]
-    ):
-        train_viscosities = train_val_viscosities.loc[train_index]
-        val_viscosities = train_val_viscosities.loc[val_index]
+    train_viscosities, val_viscosities = train_test_split(
+        temp_df,
+        test_size=validation_size,
+        stratify=temp_df["classification"],
+        random_state=42,
+    )
 
     train_folders = viscosity_df[
         viscosity_df["viscosity"].isin(train_viscosities["viscosity"])
