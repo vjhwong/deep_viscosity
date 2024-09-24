@@ -43,12 +43,16 @@ def train(
 
     model.train()
 
+    printa = True
     for epoch in tqdm(range(num_epochs)):
         for _, (inputs, targets) in enumerate(train_loader):
             inputs = inputs.to(device)
             targets = targets.to(device)
 
             # Forward pass
+            if printa:
+                print(inputs)
+                printa = False
             outputs = model(inputs)
             train_loss = criterion(outputs, targets)
 

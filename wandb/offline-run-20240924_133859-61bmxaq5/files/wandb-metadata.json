@@ -1,0 +1,29 @@
+{
+  "os":  "macOS-14.6.1-x86_64-i386-64bit",
+  "python":  "3.11.9",
+  "startedAt":  "2024-09-24T11:38:59.781844Z",
+  "program":  "/Users/hannamalmvall/Library/CloudStorage/OneDrive-Uppsalauniversitet/År 5/Forskningspraktik/deep_viscosity/deep_viscosity/main.py",
+  "git":  {
+    "remote":  "https://github.com/vjhwong/deep_viscosity",
+    "commit":  "55e3544b16a0b974741c5e662b15dc044faa8b00"
+  },
+  "root":  "/Users/hannamalmvall/Library/CloudStorage/OneDrive-Uppsalauniversitet/År 5/Forskningspraktik/deep_viscosity",
+  "host":  "Hannas-MacBook-Air-2.local",
+  "username":  "hannamalmvall",
+  "executable":  "/Users/hannamalmvall/anaconda3/envs/deep_viscosity/bin/python",
+  "cpu_count":  8,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "245107195904",
+      "used":  "188121849856"
+    }
+  },
+  "memory":  {
+    "total":  "8589934592"
+  },
+  "cpu":  {
+    "count":  8,
+    "countLogical":  8
+  }
+}
