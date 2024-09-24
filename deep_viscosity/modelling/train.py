@@ -2,10 +2,11 @@ import torch
 import torch.utils.data
 import torch.nn as nn
 import torch.optim as optim
-from modelling.model import CNN3DVisco
 from tqdm import tqdm
 import wandb
 import matplotlib.pyplot as plt
+
+from deep_viscosity.modelling.model import CNN3DVisco
 
 
 def train(
@@ -23,16 +24,17 @@ def train(
         learning_rate (float): The learning rate to use for training.
         num_epochs (int): The number of epochs to train for.
     """
-    wandb.init(
-        project="DeepViscosity",
-        config={
-            "learning_rate": learning_rate,
-            "architecture": "CNN",
-            "dataset": "DeepViscosity",
-            "epochs": num_epochs,
-        },
-    )
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # wandb.init(
+    #     project="DeepViscosity",
+    #     config={
+    #         "learning_rate": learning_rate,
+    #         "architecture": "CNN",
+    #         "dataset": "DeepViscosity",
+    #         "epochs": num_epochs,
+    #     },
+    # )
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"
     model.to(device)
 
     criterion = nn.MSELoss()
@@ -43,16 +45,12 @@ def train(
 
     model.train()
 
-    printa = True
     for epoch in tqdm(range(num_epochs)):
         for _, (inputs, targets) in enumerate(train_loader):
             inputs = inputs.to(device)
             targets = targets.to(device)
 
             # Forward pass
-            if printa:
-                print(inputs)
-                printa = False
             outputs = model(inputs)
             train_loss = criterion(outputs, targets)
 
@@ -78,7 +76,7 @@ def train(
 
         val_loss /= len(val_loader)
         val_loss_values.append(val_loss)
-        wandb.log({"train_loss": train_loss, "val_loss": val_loss})
+        # wandb.log({"train_loss": train_loss, "val_loss": val_loss})
     print(
         f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )

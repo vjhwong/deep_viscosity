@@ -5,9 +5,9 @@ import pandas as pd
 from torch.utils.data.dataloader import DataLoader
 from sklearn.model_selection import StratifiedShuffleSplit
 
-from preprocessing.dataset import DeepViscosityDataset
-from preprocessing.utils.transforms import transform
-from preprocessing.utils.enums import ViscosityClass
+from deep_viscosity.preprocessing.dataset import DeepViscosityDataset
+from deep_viscosity.preprocessing.utils.transforms import transform
+from deep_viscosity.preprocessing.utils.enums import ViscosityClass
 
 
 def create_dataloaders(
