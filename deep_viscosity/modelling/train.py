@@ -24,17 +24,16 @@ def train(
         learning_rate (float): The learning rate to use for training.
         num_epochs (int): The number of epochs to train for.
     """
-    # wandb.init(
-    #     project="DeepViscosity",
-    #     config={
-    #         "learning_rate": learning_rate,
-    #         "architecture": "CNN",
-    #         "dataset": "DeepViscosity",
-    #         "epochs": num_epochs,
-    #     },
-    # )
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = "cpu"
+    wandb.init(
+        project="DeepViscosity",
+        config={
+            "learning_rate": learning_rate,
+            "architecture": "CNN",
+            "dataset": "DeepViscosity",
+            "epochs": num_epochs,
+        },
+    )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
     criterion = nn.MSELoss()
