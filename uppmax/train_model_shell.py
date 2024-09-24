@@ -2,7 +2,7 @@ import sys
 import os
 import argparse
 
-from deep_viscosity.loader import create_dataloaders
+from deep_viscosity.preprocessing.loader import create_dataloaders
 from deep_viscosity.modelling.model import CNN3DVisco
 from deep_viscosity.modelling.train import train
 
