@@ -28,6 +28,7 @@ def create_dataloaders(
     # Initialize an empty list to store the data
     viscosity_data = []
     unique_viscosity_values = []
+    validation_size = validation_size / (1-test_size)
 
     # folder_name structure: [viscosity value]_[video number]
     for folder_name in os.listdir(processed_data_path):
