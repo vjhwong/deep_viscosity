@@ -6,7 +6,7 @@ from tqdm import tqdm
 import wandb
 import matplotlib.pyplot as plt
 
-from deep_viscosity.modelling.model import CNN3DVisco
+from modelling.model import CNN3DVisco
 
 
 def train(
@@ -75,7 +75,7 @@ def train(
 
         val_loss /= len(val_loader)
         val_loss_values.append(val_loss)
-        # wandb.log({"train_loss": train_loss, "val_loss": val_loss})
+        wandb.log({"train_loss": train_loss, "val_loss": val_loss})
     print(
         f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )
