@@ -74,6 +74,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         # fully connected layer, output = multi-classes
         self.fc3 = nn.Linear(self.fc_hidden2, 1)
         nn.init.constant_(self.fc3.bias, 272.05)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x_3d: torch.Tensor) -> torch.Tensor:
         """Forward pass.
@@ -105,4 +106,8 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         # x_out = func.dropout(x_out, p=self.dropout, training=self.training)
 
         x_out = self.fc3(x_out)
+
+        #Softmax
+        x_out = self.softmax(x_out)
+        x_out = 1 + x_out * (939 - 1)
         return x_out
