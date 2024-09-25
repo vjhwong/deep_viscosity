@@ -45,7 +45,6 @@ def train(
     model.train()
     for epoch in tqdm(range(num_epochs)):
         for i, (inputs, targets) in enumerate(train_loader):
-            print(i)
             inputs = inputs.to(device)
             targets = targets.to(device)
             # Forward pass
