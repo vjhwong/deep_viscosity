@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as func
-from deep_viscosity.modelling.utils.functions import conv3d_output_size
+from modelling.utils.functions import conv3d_output_size
 
 
 class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
