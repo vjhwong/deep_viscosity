@@ -43,12 +43,13 @@ def train(
     val_loss_values = []
 
     model.train()
-
+    print("Starting training")
     for epoch in tqdm(range(num_epochs)):
         for _, (inputs, targets) in enumerate(train_loader):
+
             inputs = inputs.to(device)
             targets = targets.to(device)
-
+            print(inputs.shape)
             # Forward pass
             outputs = model(inputs)
             train_loss = criterion(outputs, targets)
