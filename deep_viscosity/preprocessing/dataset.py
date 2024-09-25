@@ -42,7 +42,7 @@ class DeepViscosityDataset(Dataset):
             torch.Tensor: Tensor containing the images.
         """
         video_tensor = []
-        for image in os.listdir(os.path.join(self.processed_data_path, folder)):
+        for image in sorted(os.listdir(os.path.join(self.processed_data_path, folder))):
             image_path = os.path.join(self.processed_data_path, folder, image)
             image = Image.open(image_path).convert("L")
 
