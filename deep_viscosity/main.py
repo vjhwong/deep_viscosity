@@ -17,10 +17,6 @@ def main() -> None:
         validation_size=0.15,
         test_size=0.15,
     )
-
-    print(len(train_loader))
-    print(len(test_loader))
-    print(len(valid_loader))
     # model = CNN3DVisco(55, 210, 220)
 
     # train(model, train_loader, valid_loader, 0.001, 20)
