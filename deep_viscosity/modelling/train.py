@@ -5,9 +5,9 @@ import torch.optim as optim
 from tqdm import tqdm
 import wandb
 import matplotlib.pyplot as plt
+from math import sqrt
 
 from modelling.model import CNN3DVisco
-
 
 def train(
     model: nn.Module,
@@ -38,6 +38,7 @@ def train(
 
     criterion = nn.MSELoss()
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
     train_loss_values = []
     val_loss_values = []
@@ -56,8 +57,11 @@ def train(
             train_loss.backward()
             optimizer.step()
 
+        scheduler.step()
+
         # here starts the code for the validation
         train_loss /= len(train_loader)
+        train_loss = sqrt(train_loss + 1e-6)
         train_loss_values.append(train_loss)
 
         val_loss = 0.0
@@ -70,19 +74,28 @@ def train(
 
                 val_outputs = model(val_inputs)
                 val_loss = criterion(val_outputs, val_targets.float()).item()
-
         val_loss /= len(val_loader)
+        val_loss = sqrt(val_loss + 1e-6)
         val_loss_values.append(val_loss)
         wandb.log({"train_loss": train_loss, "val_loss": val_loss})
-    print(
-        f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
-    )
-
-    plt.plot(train_loss_values, label="Training Loss")
-    plt.plot(val_loss_values, label="Validation Loss")
+        if epoch % 5 == 0:
+          print()
+          print(f"Validation targets:\n{val_targets}")
+          print()
+          print(f"Validation output:\n{val_outputs}")
+          print(f"Validation loss: {val_loss}")
+          print("\n\n")
+    # print(
+    #     f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
+    # )
+    print(f"Final train loss: {train_loss_values[-1]}")
+    print(f"Final validation loss: {val_loss_values[-1]}")
+    plt.plot(range(num_epochs), train_loss_values, label="Training Loss")
+    plt.plot(range(num_epochs), val_loss_values, label="Validation Loss")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.title("Training and Validation Loss over Epochs")
+    plt.grid()
     plt.legend()
     plt.show()
 

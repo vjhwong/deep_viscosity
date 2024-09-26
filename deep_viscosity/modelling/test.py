@@ -4,6 +4,7 @@ from tqdm import tqdm
 from torch.utils.data.dataloader import DataLoader
 from modelling.model import CNN3DVisco
 import matplotlib.pyplot as plt
+from math import sqrt
 
 
 def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
@@ -30,9 +31,11 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
             outputs = model(inputs)
 
             loss = criterion(outputs, targets.float())
-            test_loss += loss.item()
+            loss = sqrt(loss + 1e-6)
+            test_loss += loss
             all_targets.append(targets.cpu())
             all_outputs.append(outputs.cpu())
+    print(f"This is the target:{targets} and this is the true: {outputs}")
 
     avg_test_loss = test_loss / len(test_loader)
 

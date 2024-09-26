@@ -3,20 +3,32 @@ from preprocessing.loader import create_dataloaders
 from modelling.model import CNN3DVisco
 from modelling.train import train
 from modelling.test import test
+import torch
 
 
-def main():
+torch.manual_seed(0)
+
+def main() -> None:
+    torch.cuda.empty_cache()
     processed_data_path = os.path.join("data", "processed")
     train_loader, test_loader, valid_loader = create_dataloaders(
-        batch_size=8, processed_data_path=processed_data_path
+        batch_size=32,
+        processed_data_path=processed_data_path,
+        validation_size=0.15,
+        test_size=0.15,
     )
 
-    model = CNN3DVisco(55, 210, 220)
+    print(len(train_loader))
+    print(len(test_loader))
+    print(len(valid_loader))
+    # model = CNN3DVisco(55, 210, 220)
 
-    train(model, train_loader, valid_loader, 0.05, 1)
+    # train(model, train_loader, valid_loader, 0.001, 20)
 
-    # test("path_to_model",test_loader)
+    # model.load_state_dict(state_dict=torch.load("trained_model.pth", weights_only=True))
+    # model.eval()
 
+    # test(model, test_loader)
     return
 
 
