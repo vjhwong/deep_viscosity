@@ -45,12 +45,15 @@ def train(
 
     model.train()
     for epoch in tqdm(range(num_epochs)):
+        epoch_loss_train_sum = 0
+        epoch_loss_val_sum = 0
         for i, (inputs, targets) in enumerate(train_loader):
             inputs = inputs.to(device)
             targets = targets.to(device)
             # Forward pass
             outputs = model(inputs)
             train_loss = criterion(outputs, targets)
+            epoch_loss_train_sum += train_loss
 
             # Backward pass and optimization
             optimizer.zero_grad()
@@ -59,11 +62,11 @@ def train(
 
         scheduler.step()
 
-        # here starts the code for the validation
-        train_loss /= len(train_loader)
-        train_loss = sqrt(train_loss + 1e-6)
-        train_loss_values.append(train_loss)
+        epoch_loss_train_sum = epoch_loss_train_sum / len(train_loader)
+        epoch_loss_train_sum = sqrt(epoch_loss_train_sum + 1e-6)
+        train_loss_values.append(epoch_loss_train_sum)
 
+        # here starts the code for the validation
         val_loss = 0.0
 
         with torch.no_grad():
@@ -74,16 +77,20 @@ def train(
 
                 val_outputs = model(val_inputs)
                 val_loss = criterion(val_outputs, val_targets.float()).item()
-        val_loss /= len(val_loader)
-        val_loss = sqrt(val_loss + 1e-6)
-        val_loss_values.append(val_loss)
-        wandb.log({"train_loss": train_loss, "val_loss": val_loss})
+                epoch_loss_val_sum += val_loss
+
+        epoch_loss_val_sum = epoch_loss_val_sum / len(val_loader)
+        epoch_loss_val_sum = sqrt(epoch_loss_val_sum + 1e-6)
+        val_loss_values.append(epoch_loss_val_sum)
+
+        wandb.log({"train_loss": epoch_loss_train_sum, "val_loss": epoch_loss_val_sum})
+
         if epoch % 5 == 0:
           print()
           print(f"Validation targets:\n{val_targets}")
           print()
           print(f"Validation output:\n{val_outputs}")
-          print(f"Validation loss: {val_loss}")
+          print(f"Validation loss: {epoch_loss_val_sum}")
           print("\n\n")
     # print(
     #     f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
