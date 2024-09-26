@@ -23,12 +23,4 @@ You have now successfully created and activated the Conda environment using the 
 
 
 
-**Prepare the data**
-Run: 
-1. `clean_raw_data.py`
-2. `rename_data_files.py`
-3. `mask_frames.py`
-4. `frame_selection.py`
-
-
 

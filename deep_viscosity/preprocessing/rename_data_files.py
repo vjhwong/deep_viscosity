@@ -87,27 +87,25 @@ def find_interpolated_viscosities():
 
     return percentages_all, viscosities_all
 
-
-def rename_videos(percentages, viscosities):
+def rename_videos(data_path):
+    percentages, viscosities = find_interpolated_viscosities()
     old_name_to_new_name = {}
     for percent, viscosity in zip(percentages, viscosities):
         old_name_to_new_name[str(percent)] = str(round(viscosity, 2))
 
-    raw_data_path = "data/raw"
-    for file in os.listdir(raw_data_path):
+    for file in os.listdir(data_path):
         if "avi" in file:
             old_label = file.split("_", 1)
-            old_file_name = os.path.join(raw_data_path, file)
+            old_file_name = os.path.join(data_path, file)
             new_file_name = os.path.join(
-                raw_data_path, old_name_to_new_name[old_label[0]] + old_label[1]
+                data_path, old_name_to_new_name[old_label[0]] + old_label[1]
             )
 
             os.rename(old_file_name, new_file_name)
 
-
 def main():
-    percentages, viscosities = find_interpolated_viscosities()
-    rename_videos(percentages, viscosities)
+    data_path = "data/raw_modified"
+    rename_videos(data_path)
 
 
 if __name__ == "__main__":
