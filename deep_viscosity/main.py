@@ -17,14 +17,14 @@ def main() -> None:
         validation_size=0.15,
         test_size=0.15,
     )
-    # model = CNN3DVisco(55, 210, 220)
+    model = CNN3DVisco(55, 210, 220)
 
-    # train(model, train_loader, valid_loader, 0.001, 20)
+    train(model, train_loader, valid_loader, 0.001, 20)
 
-    # model.load_state_dict(state_dict=torch.load("trained_model.pth", weights_only=True))
-    # model.eval()
+    model.load_state_dict(state_dict=torch.load("trained_model.pth", weights_only=True))
+    model.eval()
 
-    # test(model, test_loader)
+    test(model, test_loader)
     return
 
 
