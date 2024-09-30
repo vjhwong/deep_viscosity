@@ -48,6 +48,7 @@ def train(
         epoch_loss_train_sum = 0
         epoch_loss_val_sum = 0
         for i, (inputs, targets) in enumerate(train_loader):
+            optimizer.zero_grad()
             inputs = inputs.to(device)
             targets = targets.to(device)
             # Forward pass
@@ -56,7 +57,6 @@ def train(
             epoch_loss_train_sum += train_loss
 
             # Backward pass and optimization
-            optimizer.zero_grad()
             train_loss.backward()
             optimizer.step()
 
