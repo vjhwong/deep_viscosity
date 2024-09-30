@@ -105,4 +105,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         #x_out = func.dropout(x_out, p=self.dropout, training=self.training)
 
         x_out = self.fc3(x_out)
+
+        x_out = torch.sigmoid(x_out)
+        x_out = 1 + x_out *938
         return x_out
