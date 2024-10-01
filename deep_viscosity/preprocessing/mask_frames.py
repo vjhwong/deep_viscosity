@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-def mask_videos(video_folder_path: str, mask_path: str):
+def mask_videos(input_path: str, output_path: str):
     """Mask all frames in all videos in the folder with the mask provided and save them in a new folder.
 
     Args:
@@ -16,11 +16,11 @@ def mask_videos(video_folder_path: str, mask_path: str):
         os.makedirs(output_folder_path)
 
     # Load the mask
-    masks = np.load(mask_path)
+    masks = np.load(output_path)
 
     # Iterate over all video files in the folder
-    for video_file in os.listdir(video_folder_path):
-        video_path = os.path.join(video_folder_path, video_file)
+    for video_file in os.listdir(input_path):
+        video_path = os.path.join(input_path, video_file)
         mask_frames(video_path, masks, output_folder_path)
 
 
@@ -76,11 +76,9 @@ def get_video_name(video_path: str) -> str:
 
 
 def main():
-    video_folder_path = os.path.join("data", "raw")
-    mask_path = os.path.join("data", "masks.npy")
-
-    mask_videos(video_folder_path, mask_path)
-
+    input_path = "data/raw_modified"
+    output_path = "data/masks.npy"
+    mask_videos(input_path, output_path)
 
 if __name__ == "__main__":
     main()

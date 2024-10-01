@@ -1,7 +1,6 @@
 import os
 import shutil
 
-
 def frame_selection(output_path: str, input_path: str, frame_range: tuple):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -16,13 +15,11 @@ def frame_selection(output_path: str, input_path: str, frame_range: tuple):
                     os.path.join(output_path, video, frame),
                 )
 
-
 def main():
     output_path = "data/processed"
     input_path = "data/masked"
     frame_range = (45, 99)
     frame_selection(output_path, input_path, frame_range)
-
 
 if __name__ == "__main__":
     main()
