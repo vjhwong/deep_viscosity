@@ -12,7 +12,7 @@ def main() -> None:
     torch.cuda.empty_cache()
     processed_data_path = os.path.join("data", "processed")
     train_loader, test_loader, valid_loader = create_dataloaders(
-        batch_size=32,
+        batch_size=16,
         processed_data_path=processed_data_path,
         validation_size=0.15,
         test_size=0.15,
