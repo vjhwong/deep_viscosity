@@ -16,14 +16,14 @@ def get_video_index(video_name: str) -> int:
 
 def get_new_video_name(remove_first_vid: bool, video_name: str) -> str:
     """Returns a new name for a video where the index in the file name has been decreased by 1,
-    if the first video has been removed
+    if the first video has been removed.
 
     Args:
-        remove_first_vid (bool): Indicates if the first video has been removed
-        video_name (str): The name of the video
+        remove_first_vid (bool): Indicates if the first video has been removed.
+        video_name (str): The name of the video.
 
     Returns:
-        str: The new video name
+        str: The new video name.
     """
     if remove_first_vid:
         video_index = get_video_index(video_name) - 1
@@ -34,12 +34,12 @@ def get_new_video_name(remove_first_vid: bool, video_name: str) -> str:
 
 
 def remove_first_video(remove_first_vid: bool, input_path: str, output_path: str):
-    """Removes the first video of each viscosity
+    """Removes the first video of each viscosity.
 
     Args:
-        remove_first_vid (bool): Indicates if the first video has been removed
-        input_path (str): The path to the videos
-        output_path (str): The new path to the remaining videos
+        remove_first_vid (bool): Indicates if the first video has been removed.
+        input_path (str): The path to the videos.
+        output_path (str): The new path to the remaining videos.
     """
     if not os.path.exists(output_path):
         shutil.copytree(input_path, output_path)

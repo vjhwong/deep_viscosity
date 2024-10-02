@@ -2,13 +2,13 @@ import os
 
 
 def get_extreme_number_of_frames(path: str) -> tuple[int]:
-    """Counts the maximum and minimum number of frames in the videos
+    """Counts the maximum and minimum number of frames in the videos.
 
     Args:
-        path (str): Path where the videos are stored as frames
+        path (str): Path where the videos are stored as frames.
 
     Returns:
-      tuple[int]: the maximum and minimum number of frames
+      tuple[int]: the maximum and minimum number of frames.
 
     """
     counts = []
@@ -22,13 +22,13 @@ def get_extreme_number_of_frames(path: str) -> tuple[int]:
 
 
 def get_videos_with_num_frames(n_frames: int, path: str) -> list[str]:
-    """Gets the file names of the videos with the specified number of frames
+    """Gets the file names of the videos with the specified number of frames.
 
     Args:
-        path (str): Path where the videos are stored as frames
+        path (str): Path where the videos are stored as frames.
 
     Returns:
-      list[str]: A list with the names of the videos with the specified number of frames
+      list[str]: A list with the names of the videos with the specified number of frames.
     """
     video_names = []
     for folder in os.listdir(path):

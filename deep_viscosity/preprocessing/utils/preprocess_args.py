@@ -2,10 +2,10 @@ import argparse
 
 
 def get_args() -> argparse.Namespace:
-    """Parses command-line arguments for video preprocessing
+    """Parses command-line arguments for video preprocessing.
 
     Returns:
-        argparse.Namespace: Parsed arguments
+        argparse.Namespace: Parsed arguments.
     """
     parser = argparse.ArgumentParser(description="Preprocess a video dataset")
     parser.add_argument(

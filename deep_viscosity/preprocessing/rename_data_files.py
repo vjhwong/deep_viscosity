@@ -94,10 +94,10 @@ def find_interpolated_viscosities() -> tuple[list[int]]:
 
 
 def rename_videos(data_path: str):
-    """Renames video files so they contain the viscosity instead of the percentage glycerol
+    """Renames video files so they contain the viscosity instead of the percentage glycerol.
 
     Args:
-        data_path: Path to video folders
+        data_path: Path to video folders.
     """
     (percentages, viscosities) = find_interpolated_viscosities()
     old_name_to_new_name = {}

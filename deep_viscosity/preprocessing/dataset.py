@@ -27,7 +27,7 @@ class DeepViscosityDataset(Dataset):
         self.transform = transform
 
     def __len__(self):
-        "Denotes the total number of samples"
+        "Denotes the total number of samples."
         return len(self.folder_list)
 
     def read_images(self, folder: str, transform: transforms.Compose) -> torch.Tensor:

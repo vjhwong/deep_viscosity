@@ -6,7 +6,8 @@ from utils.preprocess_args import get_args
 
 
 def main():
-    """The entire data preprocessing pipeline"""
+    "The entire data preprocessing pipeline."
+
     # data paths
     raw_data_path = "data/raw"
     raw_data_modified_path = "data/raw_modified"
