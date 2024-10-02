@@ -7,7 +7,8 @@ def mask_videos(input_path: str, output_path: str, mask_path: str):
     """Mask all frames in all videos in the folder with the mask provided and save them in a new folder.
 
     Args:
-        video_folder_path (str): Path to the folder containing the videos.
+        input_path (str): Path to the folder containing the videos.
+        output_path (str): Path to the folder where the masked frames will be saved.
         mask_path (str): Path to the mask file.
     """
 
@@ -29,7 +30,7 @@ def mask_frames(video_path: str, masks: np.ndarray, output_path: str):
     Args:
         video_path (str): Path to the video file.
         masks (np.ndarray): Masks to apply to the frames.
-        output_folder_path (str): Path to the folder where the masked frames will be saved.
+        output_path (str): Path to the folder where the masked frames will be saved.
     """
     cap = cv2.VideoCapture(video_path)
 
