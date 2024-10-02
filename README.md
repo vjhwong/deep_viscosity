@@ -19,12 +19,24 @@ To create a Conda environment using the `environment.yml` file in this repositor
     conda activate deep_viscosity
     ```
 
-
 You have now successfully created and activated the Conda environment using the `environment.yml` file.
 
 
 ## Preprocessing the data
-All raw data should be avi files stored in the `data/raw` folder. 
+### The data
+All raw data should be avi files stored in the `data/raw` folder. These videos need to be named according to the following convention: 
+*(percentage of glycerol)_(test number).avi*
+
+The allowed values for the percentages of glycerol can be found in the file `deep_viscosity/preprocessing/rename_data_files.py`.
+### Preprocessing
+To preprocess the data one should run the file `deep_viscosity/preprocessing/preprocessing.py`. Arguments must be passed to this script which should be done via the command line. The required arguments can be found in the file `deep_viscosity/preprocessing/utils/preprocess_args.py`. The exact command used for the preprocessing was the following:
+
+```
+python deep_viscosity/preprocessing/preprocessing.py --first_frame 45 --last_frame 99 --mask_path data/masks.npy --remove_first_vid True
+```
+
+
+
 
 
 
