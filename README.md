@@ -1,6 +1,7 @@
-# deep_viscosity
+# Deep Learning for Viscosity Estimations
+This repository contains the code for the Deep Viscosity Project. The project aims at creating a 3D convolutional neural network that can predict viscosities of fluids based on video data of teh fluid in question. 
 
-**Setting up a virtual environment**
+## Setting up a virtual environment
 To create a Conda environment using the `environment.yml` file in this repository, follow these steps:
 
 1. Open a terminal or command prompt.
@@ -21,6 +22,9 @@ To create a Conda environment using the `environment.yml` file in this repositor
 
 You have now successfully created and activated the Conda environment using the `environment.yml` file.
 
+
+## Preprocessing the data
+All raw data should be avi files stored in the `data/raw` folder. 
 
 
 
