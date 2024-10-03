@@ -26,7 +26,7 @@ def train(
         num_epochs (int): The number of epochs to train for.
     """
     wandb.init(
-        project="DeepViscosity",
+        project="DeppViscosity",
         config={
             "learning_rate": learning_rate,
             "architecture": "CNN",
