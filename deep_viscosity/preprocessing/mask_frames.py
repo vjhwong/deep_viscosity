@@ -3,34 +3,34 @@ import os
 import numpy as np
 
 
-def mask_videos(video_folder_path: str, mask_path: str):
+def mask_videos(input_path: str, output_path: str, mask_path: str):
     """Mask all frames in all videos in the folder with the mask provided and save them in a new folder.
 
     Args:
-        video_folder_path (str): Path to the folder containing the videos.
+        input_path (str): Path to the folder containing the videos.
+        output_path (str): Path to the folder where the masked frames will be saved.
         mask_path (str): Path to the mask file.
     """
 
-    output_folder_path = os.path.join("data", "masked")
-    if not os.path.exists(output_folder_path):
-        os.makedirs(output_folder_path)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
     # Load the mask
     masks = np.load(mask_path)
 
     # Iterate over all video files in the folder
-    for video_file in os.listdir(video_folder_path):
-        video_path = os.path.join(video_folder_path, video_file)
-        mask_frames(video_path, masks, output_folder_path)
+    for video_file in os.listdir(input_path):
+        video_path = os.path.join(input_path, video_file)
+        mask_frames(video_path, masks, output_path)
 
 
-def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
+def mask_frames(video_path: str, masks: np.ndarray, output_path: str):
     """Mask all frames in the video with the mask provided and save them in a new folder.
 
     Args:
         video_path (str): Path to the video file.
         masks (np.ndarray): Masks to apply to the frames.
-        output_folder_path (str): Path to the folder where the masked frames will be saved.
+        output_path (str): Path to the folder where the masked frames will be saved.
     """
     cap = cv2.VideoCapture(video_path)
 
@@ -45,7 +45,7 @@ def mask_frames(video_path: str, masks: np.ndarray, output_folder_path: str):
     cap.release()
 
     video_name = get_video_name(video_path)
-    masked_frames_folder_path = os.path.join(output_folder_path, video_name)
+    masked_frames_folder_path = os.path.join(output_path, video_name)
     os.makedirs(masked_frames_folder_path)
 
     for index, (mask, frame) in enumerate(zip(masks, frames)):
@@ -76,11 +76,10 @@ def get_video_name(video_path: str) -> str:
 
 
 def main():
-    video_folder_path = os.path.join("data", "raw")
-    mask_path = os.path.join("data", "masks.npy")
-
-    mask_videos(video_folder_path, mask_path)
-
+    input_path = "data/raw_modified"
+    output_path = "data/masked"
+    mask_path = "data/masks.npy"
+    mask_videos(input_path, output_path, mask_path)
 
 if __name__ == "__main__":
     main()

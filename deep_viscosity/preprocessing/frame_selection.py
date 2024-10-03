@@ -2,7 +2,14 @@ import os
 import shutil
 
 
-def frame_selection(output_path: str, input_path: str, frame_range: tuple):
+def frame_selection(output_path: str, input_path: str, frame_range: tuple[int]):
+    """Creates a new folder with only selected frames.
+
+    Args:
+        output_path (str): Where the folders with selected frames will be stores.
+        input_path (str): The path with all frames for each video.
+        frame_range (tuple[int]): The range for which frames should be selected.
+    """
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 

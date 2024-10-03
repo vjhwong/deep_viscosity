@@ -20,8 +20,8 @@ def create_dataloaders(
     regression models.
 
     Args:
-        batch_size (int): batch size used for training the model
-        processed_data_path (str): path to processed folder
+        batch_size (int): batch size used for training the model.
+        processed_data_path (str): path to processed folder.
         validation_size (float, optional): validation size. Defaults to 0.2.
         test_size (float, optional): test size. Defaults to 0.2.
     """
