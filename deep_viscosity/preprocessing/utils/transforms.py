@@ -8,5 +8,5 @@ def transform() -> transforms.Compose:
         transforms.Compose: List of transformations.
     """
     return transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize(mean=[0.5], std=[0.5])]
+        [transforms.ToTensor(), transforms.Normalize(mean=[0], std=[1])]
     )
