@@ -3,7 +3,12 @@ import numpy as np
 from scipy import interpolate
 
 
-def find_interpolated_viscosities():
+def find_interpolated_viscosities() -> tuple[list[int]]:
+    """Finds the viscosity of glycerol solutions of different percentages based on known viscosities
+
+    Returns:
+        tuple[list[int]]: A tuple with a list of percentage values and a list of corresponding viscosities
+    """
     percentages = [
         0,
         10,
@@ -85,10 +90,16 @@ def find_interpolated_viscosities():
     viscosities_all = viscosities + interpolated_viscosities.tolist()
     viscosities_all.sort()
 
-    return percentages_all, viscosities_all
+    return (percentages_all, viscosities_all)
 
-def rename_videos(data_path):
-    percentages, viscosities = find_interpolated_viscosities()
+
+def rename_videos(data_path: str):
+    """Renames video files so they contain the viscosity instead of the percentage glycerol.
+
+    Args:
+        data_path: Path to video folders.
+    """
+    (percentages, viscosities) = find_interpolated_viscosities()
     old_name_to_new_name = {}
     for percent, viscosity in zip(percentages, viscosities):
         old_name_to_new_name[str(percent)] = str(round(viscosity, 2))
@@ -102,6 +113,7 @@ def rename_videos(data_path):
             )
 
             os.rename(old_file_name, new_file_name)
+
 
 def main():
     data_path = "data/raw_modified"

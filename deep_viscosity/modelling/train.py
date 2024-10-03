@@ -9,6 +9,7 @@ from math import sqrt
 
 from modelling.model import CNN3DVisco
 
+
 def train(
     model: nn.Module,
     train_loader: torch.utils.data.DataLoader,
@@ -86,12 +87,12 @@ def train(
         wandb.log({"train_loss": epoch_loss_train_sum, "val_loss": epoch_loss_val_sum})
 
         if epoch % 5 == 0:
-          print()
-          print(f"Validation targets:\n{val_targets}")
-          print()
-          print(f"Validation output:\n{val_outputs}")
-          print(f"Validation loss: {epoch_loss_val_sum}")
-          print("\n\n")
+            print()
+            print(f"Validation targets:\n{val_targets}")
+            print()
+            print(f"Validation output:\n{val_outputs}")
+            print(f"Validation loss: {epoch_loss_val_sum}")
+            print("\n\n")
     # print(
     #     f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
     # )

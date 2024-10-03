@@ -1,0 +1,1 @@
+python deep_viscosity/preprocessing/preprocessing.py --first_frame 45 --last_frame 99 --mask_path data/masks.npy --remove_first_vid True

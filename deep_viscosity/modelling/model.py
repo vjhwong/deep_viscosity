@@ -10,7 +10,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         t_dim: int,
         img_x: int,
         img_y: int,
-        #dropout: float = 0.1,
+        # dropout: float = 0.1,
         fc_hidden1: int = 256,
         fc_hidden2: int = 100,
     ) -> None:
@@ -31,7 +31,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         self.img_y = img_y
         # fully connected layer hidden nodes
         self.fc_hidden1, self.fc_hidden2 = fc_hidden1, fc_hidden2
-        #self.dropout = dropout
+        # self.dropout = dropout
         self.ch1, self.ch2 = 70, 80
         self.k1, self.k2 = (5, 5, 5), (3, 3, 3)  # 3d kernel size
         self.s1, self.s2 = (2, 2, 2), (2, 2, 2)  # 3d strides
@@ -50,7 +50,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
             stride=self.s1,
             padding=self.pd1,
         )
-        #self.bn1 = nn.BatchNorm3d(self.ch1)
+        # self.bn1 = nn.BatchNorm3d(self.ch1)
         self.conv2 = nn.Conv3d(
             in_channels=self.ch1,
             out_channels=self.ch2,
@@ -58,9 +58,9 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
             stride=self.s2,
             padding=self.pd2,
         )
-        #self.bn2 = nn.BatchNorm3d(self.ch2)
+        # self.bn2 = nn.BatchNorm3d(self.ch2)
         self.relu = nn.ReLU(inplace=True)
-        #self.drop = nn.Dropout3d(self.dropout)
+        # self.drop = nn.Dropout3d(self.dropout)
         self.pool = nn.MaxPool3d(2)
         # fully connected hidden layer
         self.fc1 = nn.Linear(
@@ -86,14 +86,14 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         """
         # Conv 1
         x_out = self.conv1(x_3d)
-        #x_out = self.bn1(x_out)
+        # x_out = self.bn1(x_out)
         x_out = self.relu(x_out)
-        #x_out = self.drop(x_out)
+        # x_out = self.drop(x_out)
         # Conv 2
         x_out = self.conv2(x_out)
-        #x_out = self.bn2(x_out)
+        # x_out = self.bn2(x_out)
         x_out = self.relu(x_out)
-        #x_out = self.drop(x_out)
+        # x_out = self.drop(x_out)
         # flatten the conv2 to feed to fc layers
         x_out = x_out.view(x_out.size(0), -1)
 
@@ -102,7 +102,7 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         x_out = func.relu(self.fc2(x_out))
 
         # removes neurons randomly while training
-        #x_out = func.dropout(x_out, p=self.dropout, training=self.training)
+        # x_out = func.dropout(x_out, p=self.dropout, training=self.training)
 
         x_out = self.fc3(x_out)
         return x_out

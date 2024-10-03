@@ -59,8 +59,6 @@ class VideoToFrames:
 
             if not success:
                 break
-            # if frame_index not in selected_frames:
-            #     continue
 
             # NOTE: if it is desired that the length of each file name is the same, then the following line should be modified
             frame_filename = os.path.join(
