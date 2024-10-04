@@ -1,13 +1,24 @@
-import sys
-import os
 import argparse
+import random
+import numpy as np
+import torch
 
 from deep_viscosity.preprocessing.loader import create_dataloaders
 from deep_viscosity.modelling.model import CNN3DVisco
 from deep_viscosity.modelling.train import train
 
 
+def set_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
 def main() -> None:
+    set_seed(0)
+
     parser = argparse.ArgumentParser(
         description="Train a 3D CNN model for viscosity prediction."
     )
@@ -29,13 +40,13 @@ def main() -> None:
     parser.add_argument(
         "--test_size",
         type=float,
-        default=0.2,
+        default=0.15,
         help="Proportion of the dataset to include in the test split",
     )
     parser.add_argument(
         "--val_size",
         type=float,
-        default=0.1,
+        default=0.15,
         help="Proportion of the dataset to include in the validation split",
     )
 
