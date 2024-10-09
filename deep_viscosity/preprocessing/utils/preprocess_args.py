@@ -20,6 +20,11 @@ def get_args() -> argparse.Namespace:
         type=bool,
         help="Do we want the first video of each viscosity to be removed",
     )
+    parser.add_argument(
+        "--percentages",
+        type=str,
+        help="The weight percentages of the glycerol solutions in the videos",
+    )
 
     args = parser.parse_args()
     return args
