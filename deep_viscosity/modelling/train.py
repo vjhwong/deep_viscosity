@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from math import sqrt
 
 from modelling.model import CNN3DVisco
+from modified_loss import WeightedMSELoss
 
 
 def train(
@@ -37,7 +38,7 @@ def train(
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    criterion = nn.MSELoss()
+    criterion = WeightedMSELoss()
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
