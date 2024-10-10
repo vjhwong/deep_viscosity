@@ -18,7 +18,7 @@ def main():
     remove_first_video(args.remove_first_vid, raw_data_path, raw_data_modified_path)
 
     # rename data files
-    rename_videos(raw_data_modified_path)
+    rename_videos(raw_data_modified_path, [float(x) for x in args.percentages.split(',')])
 
     # mask frames
     mask_path = args.mask_path
