@@ -7,26 +7,42 @@ class WeightedMSELoss(nn.Module):
 
         """
         super(WeightedMSELoss, self).__init__()
-        self.class_weights = torch.Tensor(1/3,1/3,1/3)
+        self.class_weights = torch.Tensor([1/3,1/3,1/3])
+        self.low_threshold = 312.7
+        self.high_threshold = 625.3
     
-    def forward(self, predictions: torch.Tensor, targets: torch.Tensor, class_labels: torch.Tensor) -> torch.Tensor:
-        """Compute the weighted MSE loss.
+    def forward(self, predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Computes the RMSE loss class-wise and averages it.
         
         Args:
-            predictions (torch.Tensor): The model predictions.
-            targets (torch.Tensor): The ground truth values.
-            class_labels (torch.Tensor): The class labels (used for weighting the loss).
+            predictions (torch.Tensor): Model predictions.
+            targets (torch.Tensor): Ground truth labels.
         
         Returns:
-            torch.Tensor: The weighted MSE loss.
+            torch.Tensor: Custom RMSE loss.
         """
-        # Compute the standard MSE loss
+        low_mask = targets <= self.low_threshold
+        medium_mask = (targets > self.low_threshold) & (targets < self.high_threshold)
+        high_mask = targets >= self.high_threshold
+
+        loss = 0
+        class_count = 0
         
-        mse_loss = (predictions - targets) ** 2
+        if low_mask.sum() > 0:
+            loss_low = torch.mean((predictions[low_mask] - targets[low_mask]) ** 2)
+            loss += loss_low
+            class_count += 1
         
-        # Apply class weights: each element in the batch is multiplied by the corresponding class weight
-        weights = self.class_weights[class_labels]
-        weighted_loss = weights * mse_loss
-        
-        # Return the mean of the weighted loss
-        return weighted_loss.mean()
+        if medium_mask.sum() > 0:
+            loss_medium = torch.mean((predictions[medium_mask] - targets[medium_mask]) ** 2)
+            loss += loss_medium
+            class_count += 1
+
+        if high_mask.sum() > 0:
+            loss_high = torch.mean((predictions[high_mask] - targets[high_mask]) ** 2)
+            loss += loss_high
+            class_count += 1
+
+        return loss / class_count if class_count > 0 else torch.tensor(0.0, requires_grad=True)
+
+
