@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from preprocessing.dataset import DeepViscosityDataset
 from preprocessing.utils.transforms import transform
+from preprocessing.utils.transforms import train_transform
 from preprocessing.utils.enums import ViscosityClass
 
 
@@ -67,10 +68,11 @@ def create_dataloaders(
         viscosity_df["viscosity"].isin(test_viscosities["viscosity"])
     ]["folder_name"].tolist()
 
+    train_transform_functions = train_transforms()
     transform_function = transform()
 
     train_set = DeepViscosityDataset(
-        processed_data_path, train_folders, transform=transform_function
+        processed_data_path, train_folders, transform=train_transform_function
     )
     val_set = DeepViscosityDataset(
         processed_data_path, val_folders, transform=transform_function
