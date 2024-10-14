@@ -98,8 +98,8 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         x_out = x_out.view(x_out.size(0), -1)
 
         # FC 1 and 2
-        x_out = func.leakyrelu(self.fc1(x_out))
-        x_out = func.leakyrelu(self.fc2(x_out))
+        x_out = func.leaky_relu(self.fc1(x_out))
+        x_out = func.leaky_relu(self.fc2(x_out))
 
         # removes neurons randomly while training
         # x_out = func.dropout(x_out, p=self.dropout, training=self.training)
