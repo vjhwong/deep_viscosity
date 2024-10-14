@@ -85,7 +85,7 @@ def train_transform() -> transforms.Compose:
         [
             transforms.ToTensor(), 
             transforms.Normalize(mean=[0], std=[1]),
-            RandomPadding(padding=100)
+            RandomPadding(padding=10)
          ]
     )
 
@@ -108,31 +108,7 @@ def main():
     plt.imshow(transformed_image)
     plt.axis('off')  # Hide axis
     plt.show()
-
-
-
-    transform_to_tensor = transforms.ToTensor()
-    image_tensor = transform_to_tensor(image)
-
-    # Apply LeftPadding transform
-    padding = 100  # Example padding value
-    left_padding_transform = BottomPadding(padding)
-    transformed_tensor = left_padding_transform(image_tensor)
-
-    # Convert tensor back to image for display
-    transform_to_pil = transforms.ToPILImage()
-    transformed_image = transform_to_pil(transformed_tensor)
-
-    # Display the image
-    plt.imshow(transformed_image)
-    plt.axis("off")
-    plt.show()
-    pass
-
-
+    
 if __name__ == "__main__":
     main()
 
-
-if __name__ == "__main__":
-    main()
