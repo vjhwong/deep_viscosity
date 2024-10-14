@@ -16,4 +16,3 @@ dependencies:
   - matplotlib
   - pandas
   - wandb
-prefix: /Users/hannamalmvall/anaconda3/envs/deep_viscosity

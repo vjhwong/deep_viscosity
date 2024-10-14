@@ -1,0 +1,12 @@
+torchvision
+pytorch
+pandas
+numpy
+opencv
+scikit-learn
+python=3.11.9
+pip
+tqdm
+ipykernel
+matplotlib
+wandb
