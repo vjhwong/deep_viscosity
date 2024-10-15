@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from math import sqrt
 
 from modelling.model import CNN3DVisco
-from modified_loss import WeightedMSELoss
+from modelling.modified_loss import WeightedMSELoss
 
 
 def train(

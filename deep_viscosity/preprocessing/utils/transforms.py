@@ -106,7 +106,7 @@ def main():
     
     # Display the transformed image
     plt.imshow(transformed_image)
-    plt.axis('off')  # Hide axis
+    plt.axis('off') 
     plt.show()
     
 if __name__ == "__main__":
