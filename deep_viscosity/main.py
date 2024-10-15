@@ -18,7 +18,7 @@ def main() -> None:
         test_size=0.15,
     )
 
-    model = CNN3DVisco(55, 210, 220)
+    model = CNN3DVisco(55, 199, 196)
 
     train(model, train_loader, valid_loader, 0.001, 20)
 
