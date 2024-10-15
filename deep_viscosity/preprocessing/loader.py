@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from preprocessing.dataset import DeepViscosityDataset
 from preprocessing.utils.transforms import transform
+from preprocessing.utils.transforms import train_transform
 from preprocessing.utils.enums import ViscosityClass
 
 
@@ -15,6 +16,7 @@ def create_dataloaders(
     processed_data_path: str,
     validation_size: float = 0.2,
     test_size: float = 0.1,
+    augment_train_data: bool = False
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create the training, testing and validation data loaders for training
     regression models.
@@ -24,6 +26,7 @@ def create_dataloaders(
         processed_data_path (str): path to processed folder.
         validation_size (float, optional): validation size. Defaults to 0.2.
         test_size (float, optional): test size. Defaults to 0.2.
+        augment_train_data (bool, optional): if the train data should be augmented.
     """
     # Initialize an empty list to store the data
     viscosity_data = []
@@ -67,10 +70,14 @@ def create_dataloaders(
         viscosity_df["viscosity"].isin(test_viscosities["viscosity"])
     ]["folder_name"].tolist()
 
+    if augment_train_data:
+        train_transform_function = train_transform()
+    else:
+        train_transform_function = transform()
     transform_function = transform()
 
     train_set = DeepViscosityDataset(
-        processed_data_path, train_folders, transform=transform_function
+        processed_data_path, train_folders, transform=train_transform_function
     )
     val_set = DeepViscosityDataset(
         processed_data_path, val_folders, transform=transform_function
@@ -95,9 +102,9 @@ def get_classification(viscosity: float) -> str:
     Returns:
         str: Classification of the viscosity value.
     """
-    if viscosity < 312.7:
+    if viscosity < 200:
         return ViscosityClass.LOW.value
-    elif viscosity < 625.3:
+    elif viscosity < 500:
         return ViscosityClass.MEDIUM.value
     else:
         return ViscosityClass.HIGH.value
