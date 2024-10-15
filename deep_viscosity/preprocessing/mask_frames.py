@@ -2,6 +2,7 @@ import cv2
 import os
 import numpy as np
 
+from utils.cropping import get_window_size
 
 def mask_videos(input_path: str, output_path: str, mask_path: str):
     """Mask all frames in all videos in the folder with the mask provided and save them in a new folder.
@@ -19,18 +20,20 @@ def mask_videos(input_path: str, output_path: str, mask_path: str):
     masks = np.load(mask_path)
 
     # Iterate over all video files in the folder
+    dimensions = get_window_size(masks)
     for video_file in os.listdir(input_path):
         video_path = os.path.join(input_path, video_file)
-        mask_frames(video_path, masks, output_path)
+        mask_frames(video_path, masks, output_path, dimensions)
 
 
-def mask_frames(video_path: str, masks: np.ndarray, output_path: str):
+def mask_frames(video_path: str, masks: np.ndarray, output_path: str, dimensions: tuple[int]):
     """Mask all frames in the video with the mask provided and save them in a new folder.
 
     Args:
         video_path (str): Path to the video file.
         masks (np.ndarray): Masks to apply to the frames.
         output_path (str): Path to the folder where the masked frames will be saved.
+        dimensions tuple[int]: The cropping dimensions
     """
     cap = cv2.VideoCapture(video_path)
 
@@ -53,7 +56,7 @@ def mask_frames(video_path: str, masks: np.ndarray, output_path: str):
         masked_frame = cv2.bitwise_and(frame, frame, mask=mask.astype(np.uint8))
 
         # Crop
-        masked_frame = masked_frame[260:470, 300:520]
+        masked_frame = masked_frame[dimensions[0]:dimensions[2], dimensions[1]:dimensions[3]]
         output_path = os.path.join(
             masked_frames_folder_path, f"masked_frame_{index}.jpg"
         )
