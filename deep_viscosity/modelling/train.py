@@ -7,8 +7,8 @@ import wandb
 import matplotlib.pyplot as plt
 from math import sqrt
 
-from modelling.model import CNN3DVisco
-from modified_loss import WeightedMSELoss
+from modelling.modified_loss import WeightedMSELoss
+from modelling.utils.early_stopping import EarlyStopping
 
 
 def train(
@@ -35,6 +35,7 @@ def train(
             "epochs": num_epochs,
         },
     )
+    early_stopping = EarlyStopping(patience=5)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -94,9 +95,22 @@ def train(
             print(f"Validation output:\n{val_outputs}")
             print(f"Validation loss: {epoch_loss_val_sum}")
             print("\n\n")
-    # print(
-    #     f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
-    # )
+
+        early_stopping(val_loss)
+        if early_stopping.early_stop:
+            print("Early stopping")
+            print(f"Final train loss: {train_loss_values[-1]}")
+            print(f"Final validation loss: {val_loss_values[-1]}")
+            plt.plot(range(num_epochs), train_loss_values, label="Training Loss")
+            plt.plot(range(num_epochs), val_loss_values, label="Validation Loss")
+            plt.xlabel("Epoch")
+            plt.ylabel("Loss")
+            plt.title("Training and Validation Loss over Epochs")
+            plt.grid()
+            plt.legend()
+            plt.show()
+            break
+
     print(f"Final train loss: {train_loss_values[-1]}")
     print(f"Final validation loss: {val_loss_values[-1]}")
     plt.plot(range(num_epochs), train_loss_values, label="Training Loss")
