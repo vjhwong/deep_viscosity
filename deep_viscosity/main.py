@@ -10,9 +10,16 @@ torch.manual_seed(0)
 
 def main() -> None:
     torch.cuda.empty_cache()
-    processed_data_path = os.path.join("data", "processed")
+    processed_data_path = os.path.join(
+        "/mimer",
+        "NOBACKUP",
+        "groups",
+        "naiss2024-22-1219",
+        "data",
+        "processed"
+    )
     train_loader, test_loader, valid_loader = create_dataloaders(
-        batch_size=16,
+        batch_size=32,
         processed_data_path=processed_data_path,
         validation_size=0.15,
         test_size=0.15,
@@ -20,7 +27,7 @@ def main() -> None:
 
     model = CNN3DVisco(55, 199, 196)
 
-    train(model, train_loader, valid_loader, 0.001, 20)
+    train(model, train_loader, valid_loader, 0.001, 50)
 
     # model.load_state_dict(state_dict=torch.load("trained_model.pth", weights_only=True))
     # model.eval()
