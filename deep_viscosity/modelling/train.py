@@ -35,7 +35,7 @@ def train(
             "epochs": num_epochs,
         },
     )
-    early_stopping = EarlyStopping(patience=5)
+    early_stopping = EarlyStopping(patience=10)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -96,13 +96,14 @@ def train(
             print(f"Validation loss: {epoch_loss_val_sum}")
             print("\n\n")
 
-        early_stopping(val_loss)
+        early_stopping(val_loss, model, epoch)
+        print(early_stopping.early_stop)
         if early_stopping.early_stop:
             print("Early stopping")
             print(f"Final train loss: {train_loss_values[-1]}")
             print(f"Final validation loss: {val_loss_values[-1]}")
-            plt.plot(range(num_epochs), train_loss_values, label="Training Loss")
-            plt.plot(range(num_epochs), val_loss_values, label="Validation Loss")
+            plt.plot(range(epoch+1), train_loss_values, label="Training Loss")
+            plt.plot(range(epoch+1), val_loss_values, label="Validation Loss")
             plt.xlabel("Epoch")
             plt.ylabel("Loss")
             plt.title("Training and Validation Loss over Epochs")
