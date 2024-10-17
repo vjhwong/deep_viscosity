@@ -95,9 +95,9 @@ def get_classification(viscosity: float) -> str:
     Returns:
         str: Classification of the viscosity value.
     """
-    if viscosity < 200:
+    if viscosity < 312.7:
         return ViscosityClass.LOW.value
-    elif viscosity < 500:
+    elif viscosity < 625.3:
         return ViscosityClass.MEDIUM.value
     else:
         return ViscosityClass.HIGH.value
