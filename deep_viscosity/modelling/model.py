@@ -73,7 +73,7 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         self.fc2 = nn.Linear(self.fc_hidden1, self.fc_hidden2)
         # fully connected layer, output = multi-classes
         self.fc3 = nn.Linear(self.fc_hidden2, 1)
-        nn.init.constant_(self.fc3.bias, 338.97)
+        nn.init.constant_(self.fc3.bias, 470)
 
     def forward(self, x_3d: torch.Tensor) -> torch.Tensor:
         """Forward pass.
