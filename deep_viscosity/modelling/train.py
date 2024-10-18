@@ -1,4 +1,6 @@
 import os
+import glob
+import shutil
 import torch
 import torch.utils.data
 import torch.nn as nn
@@ -11,6 +13,26 @@ from math import sqrt
 from modelling.modified_loss import WeightedMSELoss
 from modelling.utils.early_stopping import EarlyStopping
 
+def create_model_folder() -> None:
+    folder_name = "model"
+    # Check if the folder exists
+    if not os.path.exists(folder_name):
+        # Create the folder if it doesn't exist
+        os.makedirs(folder_name)
+        print(f"Folder '{folder_name}' created.")
+
+def create_run_folder(run_name: str) -> None:
+    create_model_folder()
+    run_folder = os.path.join("models", f"{run_name}")
+    if not os.path.exists(run_folder):
+        os.makedirs(run_folder)
+
+    slurm_files = glob.glob("slurm*")
+    for idx, slurm_file in enumerate(slurm_files, 1):
+        new_file_name = f"{run_name}_{idx}.out" if len(slurm_files) > 1 else f"{run_name}.out"
+        destination_path = os.path.join(run_folder, new_file_name)
+        shutil.move(slurm_file, destination_path)
+        print(f"Moved and renamed {slurm_file} to {destination_path}")
 
 def train(
     model: nn.Module,
@@ -37,14 +59,11 @@ def train(
         },
     )
     run_name = wandb.run.name
+    create_run_folder(run_name)
     artifact = wandb.Artifact(name="model_py", type="python_file")
     artifact.add_file(
         local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "model.py"),
         name=f"{run_name}_model.py",
-        )
-    artifact.add_file(
-        local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
-        name=f"{run_name}_train.py",
         )
     artifact.add_file(
         local_path=os.path.join(os.getcwd(), "train_model.sh"),
@@ -103,7 +122,7 @@ def train(
 
         wandb.log({"train_loss": epoch_loss_train_sum, "val_loss": epoch_loss_val_sum})
 
-        early_stopping(val_loss, model)
+        early_stopping(epoch_loss_val_sum, model)
         if early_stopping.early_stop:
             print("Early stopping")
             print(f"Best model train loss: {train_loss_values[val_loss_values.index(min(val_loss_values))]}")

@@ -17,7 +17,7 @@ def set_seed(seed: int) -> None:
 
 
 def main() -> None:
-    set_seed(0)
+    set_seed(42)
 
     parser = argparse.ArgumentParser(
         description="Train a 3D CNN model for viscosity prediction."
