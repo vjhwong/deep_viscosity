@@ -3,9 +3,9 @@ import random
 import numpy as np
 import torch
 
-from deep_viscosity.modelling.model import DeepViscosityModel
-from deep_viscosity.preprocessing.loader import create_dataloaders
-from deep_viscosity.modelling.train import train
+from modelling.model import DeepViscosityModel
+from preprocessing.loader import create_dataloaders
+from modelling.train import train
 
 
 def set_seed(seed: int) -> None:

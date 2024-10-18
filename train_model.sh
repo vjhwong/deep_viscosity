@@ -24,5 +24,5 @@ export NUM_WORKERS=4
 
 # Start the training script
 echo "Starting training..."
-python train_model_shell.py --data-path $DATA_PATH --X_DIM $X_DIM --Y_DIM $Y_DIM --T_DIM $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --num_workers $NUM_WORKERS
+python deep_viscosity/train_model_shell.py --data-path $DATA_PATH --X_DIM $X_DIM --Y_DIM $Y_DIM --T_DIM $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --num_workers $NUM_WORKERS
 echo "Training finished."
