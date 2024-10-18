@@ -23,31 +23,30 @@ def main() -> None:
         description="Train a 3D CNN model for viscosity prediction."
     )
     parser.add_argument(
-        "--data_path", type=str, required=True, help="Path to the dataset"
+        "--data_path", type=str, help="Path to the dataset"
     )
 
     parser.add_argument(
-        "x_dim", type=int, required=True,help="Resolution in x dimension of the input data"
+        "--x_dim", type=int,help="Resolution in x dimension of the input data"
     )
 
     parser.add_argument(
-        "y_dim", type=int, required=True, help="Resolution in y dimension of the input data"
+        "--y_dim", type=int, help="Resolution in y dimension of the input data"
     )
 
     parser.add_argument(
-        "t_dim", type=int, required=True, help="Resolution in t dimension of the input data"
+        "--t_dim", type=int, help="Resolution in t dimension of the input data"
     )
 
     parser.add_argument(
-        "--num_epochs", type=int, required=True, help="Number of epochs for training"
+        "--num_epochs", type=int, help="Number of epochs for training"
     )
     parser.add_argument(
-        "--batch_size", type=int, required=True, help="Batch size for training"
+        "--batch_size", type=int, help="Batch size for training"
     )
     parser.add_argument(
         "--learning_rate",
         type=float,
-        required=True,
         help="Learning rate for the optimizer",
     )
     parser.add_argument(
@@ -73,15 +72,15 @@ def main() -> None:
     args = parser.parse_args()
 
     # Load dataset
-    train_loader, val_loader = create_dataloaders(
-        args.data_path, args.batch_size, args.test_size, args.val_size, args.num_workers
+    train_loader, test_loader, val_loader = create_dataloaders(
+        args.batch_size, args.data_path, args.test_size, args.val_size, args.num_workers
     )
 
     # Initialize model
     model = DeepViscosityModel(args.t_dim, args.x_dim, args.y_dim)
 
     # Train model
-    train(model, train_loader, val_loader, args.num_epochs, args.learning_rate)
+    train(model, train_loader, val_loader, args.learning_rate, args.num_epochs)
 
 
 if __name__ == "__main__":

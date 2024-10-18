@@ -39,11 +39,11 @@ def train(
     run_name = wandb.run.name
     artifact = wandb.Artifact(name="model_py", type="python_file")
     artifact.add_file(
-        path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "model.py"),
+        local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "model.py"),
         name=f"{run_name}_model.py",
         )
     artifact.add_file(
-        path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
+        local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
         name=f"{run_name}_train.py",
         )
 

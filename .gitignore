@@ -2,6 +2,7 @@
 data/
 video_frames/
 
+wandb/
 # ds_store
 .DS_Store
 

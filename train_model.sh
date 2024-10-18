@@ -7,7 +7,7 @@
 #SBATCH --mail-user=victor.ju.hin.wong@gmail.com
 
 # Load necessary modules
-module load OpenCV/4.6.0-foss-2022a-CUDA-11.7.0-contrib scikit-learn/1.1.2-foss-2022a
+module load OpenCV/4.6.0-foss-2022a-CUDA-11.7.0-contrib scikit-learn/1.1.2-foss-2022a PyTorch-bundle/1.13.1-foss-2022a-CUDA-11.7.0 matplotlib/3.5.2-foss-2022a
 
 # Activate the Python environment
 source venv/bin/activate
@@ -24,5 +24,5 @@ export NUM_WORKERS=4
 
 # Start the training script
 echo "Starting training..."
-python deep_viscosity/train_model_shell.py --data-path $DATA_PATH --X_DIM $X_DIM --Y_DIM $Y_DIM --T_DIM $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --num_workers $NUM_WORKERS
+python deep_viscosity/train_model_shell.py --data_path $DATA_PATH --x_dim $X_DIM --y_dim $Y_DIM --t_dim $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --val_size 0.15 --test_size 0.15 --num_workers $NUM_WORKERS
 echo "Training finished."
