@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as func
-from modelling.utils.functions import conv3d_output_size
+import modelling.utils.functions as f
 
 
-class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
+class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
     def __init__(
         self,
         t_dim: int,
@@ -37,10 +37,10 @@ class CNN3DVisco(nn.Module):  # här nere får vi ändra sen
         self.s1, self.s2 = (2, 2, 2), (2, 2, 2)  # 3d strides
         self.pd1, self.pd2 = (0, 0, 0), (0, 0, 0)  # 3d padding
         # compute conv1 & conv2 output shape
-        self.conv1_outshape = conv3d_output_size(
+        self.conv1_outshape = f.conv3d_output_size(
             (self.t_dim, self.img_x, self.img_y), self.pd1, self.k1, self.s1
         )
-        self.conv2_outshape = conv3d_output_size(
+        self.conv2_outshape = f.conv3d_output_size(
             self.conv1_outshape, self.pd2, self.k2, self.s2
         )
         self.conv1 = nn.Conv3d(
