@@ -19,7 +19,7 @@ export X_DIM=198
 export Y_DIM=195
 export T_DIM=55
 export BATCH_SIZE=32
-export LEARNING_RATE=0.01
+export LEARNING_RATE=0.001
 export NUM_WORKERS=4
 
 # Start the training script
