@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.utils.data
 import torch.nn as nn
@@ -35,7 +36,18 @@ def train(
             "epochs": num_epochs,
         },
     )
-    early_stopping = EarlyStopping(patience=10)
+    run_name = wandb.run.name
+    artifact = wandb.Artifact(name="model_py", type="python_file")
+    artifact.add_file(
+        path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "model.py"),
+        name=f"{run_name}_model.py",
+        )
+    artifact.add_file(
+        path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
+        name=f"{run_name}_train.py",
+        )
+
+    early_stopping = EarlyStopping(patience=10, path=os.path.join("models", f"{run_name}.pth"), verbose=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -71,7 +83,6 @@ def train(
 
         # here starts the code for the validation
         val_loss = 0.0
-
         with torch.no_grad():
 
             for val_inputs, val_targets in val_loader:
@@ -88,16 +99,7 @@ def train(
 
         wandb.log({"train_loss": epoch_loss_train_sum, "val_loss": epoch_loss_val_sum})
 
-        if epoch % 5 == 0:
-            print()
-            print(f"Validation targets:\n{val_targets}")
-            print()
-            print(f"Validation output:\n{val_outputs}")
-            print(f"Validation loss: {epoch_loss_val_sum}")
-            print("\n\n")
-
-        early_stopping(val_loss, model, epoch)
-        print(early_stopping.early_stop)
+        early_stopping(val_loss, model)
         if early_stopping.early_stop:
             print("Early stopping")
             print(f"Final train loss: {train_loss_values[-1]}")
@@ -109,8 +111,8 @@ def train(
             plt.title("Training and Validation Loss over Epochs")
             plt.grid()
             plt.legend()
-            plt.show()
-            break
+            plt.savefig(f"{run_name}_loss_plot.png")
+            return
 
     print(f"Final train loss: {train_loss_values[-1]}")
     print(f"Final validation loss: {val_loss_values[-1]}")
@@ -121,7 +123,4 @@ def train(
     plt.title("Training and Validation Loss over Epochs")
     plt.grid()
     plt.legend()
-    plt.show()
-
-    # Save the trained model
-    torch.save(model.state_dict(), "trained_model.pth")
+    plt.savefig(f"{run_name}_loss_plot.png")
