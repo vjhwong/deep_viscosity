@@ -15,6 +15,7 @@ def create_dataloaders(
     processed_data_path: str,
     validation_size: float = 0.2,
     test_size: float = 0.1,
+    num_workers: int = 0,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Create the training, testing and validation data loaders for training
     regression models.
@@ -79,9 +80,9 @@ def create_dataloaders(
         processed_data_path, test_folders, transform=transform_function
     )
 
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
 
     return train_loader, test_loader, val_loader
 
