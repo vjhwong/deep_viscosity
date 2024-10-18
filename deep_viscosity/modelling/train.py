@@ -111,7 +111,7 @@ def train(
             plt.title("Training and Validation Loss over Epochs")
             plt.grid()
             plt.legend()
-            plt.savefig(f"{run_name}_loss_plot.png")
+            plt.savefig(os.path.join("models", f"{run_name}", f"{run_name}_loss_plot.png"))
             return
 
     print(f"Final train loss: {train_loss_values[-1]}")
@@ -123,4 +123,4 @@ def train(
     plt.title("Training and Validation Loss over Epochs")
     plt.grid()
     plt.legend()
-    plt.savefig(f"{run_name}_loss_plot.png")
+    plt.savefig(os.path.join("models", f"{run_name}", f"{run_name}_loss_plot.png"))
