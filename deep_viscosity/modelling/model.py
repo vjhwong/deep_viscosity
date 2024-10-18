@@ -88,13 +88,13 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         """
         # Conv 1
         x_out = self.conv1(x_3d)
-        x_out = self.bn1(x_out)
+        # x_out = self.bn1(x_out)
         x_out = self.leakyrelu(x_out)
         # x_out = self.pool(x_out)
         # x_out = self.drop(x_out)
         # Conv 2
         x_out = self.conv2(x_out)
-        x_out = self.bn2(x_out)
+        # x_out = self.bn2(x_out)
         x_out = self.leakyrelu(x_out)
         # x_out = self.pool(x_out)
         # x_out = self.drop(x_out)

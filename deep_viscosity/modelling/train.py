@@ -70,7 +70,7 @@ def train(
         name=f"{run_name}_train_model.sh"
     )
     wandb.log_artifact(artifact)
-    early_stopping = EarlyStopping(patience=10, path=os.path.join("models", f"{run_name}.pth"), verbose=True)
+    early_stopping = EarlyStopping(patience=10, path=os.path.join("models", f"{run_name}",f"{run_name}.pth"), verbose=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
