@@ -52,7 +52,7 @@ def train(
     )
     run_name = wandb.run.name
     create_run_folder(run_name)
-    artifact = wandb.Artifact(name=f"run_name", type="python_files")
+    artifact = wandb.Artifact(name=f"{run_name}", type="python_files")
     artifact.add_file(
         local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "model.py"),
         name=f"{run_name}_model.py",
