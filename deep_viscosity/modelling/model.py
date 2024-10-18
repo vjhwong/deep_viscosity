@@ -36,13 +36,15 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         self.k1, self.k2 = (5, 5, 5), (3, 3, 3)  # 3d kernel size
         self.s1, self.s2 = (2, 2, 2), (2, 2, 2)  # 3d strides
         self.pd1, self.pd2 = (0, 0, 0), (0, 0, 0)  # 3d padding
-        # compute conv1 & conv2 output shape
+        self.pool_k = (2, 2, 2)
+        # Compute conv1 & conv2 output shape
         self.conv1_outshape = f.conv3d_output_size(
             (self.t_dim, self.img_x, self.img_y), self.pd1, self.k1, self.s1
         )
         self.conv2_outshape = f.conv3d_output_size(
             self.conv1_outshape, self.pd2, self.k2, self.s2
         )
+
         self.conv1 = nn.Conv3d(
             in_channels=1,
             out_channels=self.ch1,
@@ -50,7 +52,7 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s1,
             padding=self.pd1,
         )
-        # self.bn1 = nn.BatchNorm3d(self.ch1)
+        self.bn1 = nn.BatchNorm3d(self.ch1)
         self.conv2 = nn.Conv3d(
             in_channels=self.ch1,
             out_channels=self.ch2,
@@ -58,10 +60,10 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s2,
             padding=self.pd2,
         )
-        # self.bn2 = nn.BatchNorm3d(self.ch2)
+        self.bn2 = nn.BatchNorm3d(self.ch2)
         self.leakyrelu = nn.LeakyReLU(inplace=True)
         # self.drop = nn.Dropout3d(self.dropout)
-        self.pool = nn.MaxPool3d(2)
+        self.pool = nn.MaxPool3d(self.pool_k)
         # fully connected hidden layer
         self.fc1 = nn.Linear(
             self.ch2
@@ -88,11 +90,13 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         x_out = self.conv1(x_3d)
         # x_out = self.bn1(x_out)
         x_out = self.leakyrelu(x_out)
+        # x_out = self.pool(x_out)
         # x_out = self.drop(x_out)
         # Conv 2
         x_out = self.conv2(x_out)
         # x_out = self.bn2(x_out)
         x_out = self.leakyrelu(x_out)
+        # x_out = self.pool(x_out)
         # x_out = self.drop(x_out)
         # flatten the conv2 to feed to fc layers
         x_out = x_out.view(x_out.size(0), -1)
