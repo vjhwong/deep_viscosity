@@ -13,7 +13,7 @@ module load OpenCV/4.6.0-foss-2022a-CUDA-11.7.0-contrib scikit-learn/1.1.2-foss-
 source venv/bin/activate
 
 # Export environment variables (without spaces around '=')
-export DATA_PATH="/mimer/NOBACKUP/groups/naiss2024-22-1219/data/processed"
+export DATA_PATH="/mimer/NOBACKUP/groups/naiss2024-22-1219/processed"
 export NUM_EPOCHS=50
 export X_DIM=198
 export Y_DIM=195
