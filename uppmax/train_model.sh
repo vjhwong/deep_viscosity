@@ -1,23 +1,28 @@
-#!/bin/bash
-#SBATCH --job-name=ml_training
-#SBATCH --output=output_%j.log
-#SBATCH --error=error_%j.log
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=16G
-#SBATCH --time=24:00:00
-#SBATCH --mail-type=END,FAIL            
-#SBATCH --mail-user=victor.wong@student.uu.se
+#!/usr/bin/env bash
+#SBATCH -A NAISS2024-22-1219         
+#SBATCH -p alvis                     
+#SBATCH --gpus-per-node=A100:1       
+#SBATCH -t 0-10:00:00                
+#SBATCH --mail-type=END,FAIL         
+#SBATCH --mail-user=victor.ju.hin.wong@gmail.com
 
-module load python/3.9
-module load cuda/12.3
+# Load necessary modules
+module load OpenCV/4.6.0-foss-2022a-CUDA-11.7.0-contrib scikit-learn/1.1.2-foss-2022a
 
-# Activate conda environment
-source ~/miniconda3/bin/activate my_env
+# Activate the Python environment
+source venv/bin/activate
 
-# Set PYTHONPATH to include the directory with custom modules
-export PYTHONPATH=$PYTHONPATH:/home/your_username/my_project
+# Export environment variables (without spaces around '=')
+export DATA_PATH="/mimer/NOBACKUP/groups/naiss2024-22-1219/data/processed"
+export NUM_EPOCHS=50
+export X_DIM=198
+export Y_DIM=195
+export T_DIM=55
+export BATCH_SIZE=32
+export LEARNING_RATE=0.01
+export NUM_WORKERS=4
 
-# Run the training script with data path as argument
-python /home/your_username/my_project/train_model.py --data-path /path/to/data --num_epochs 50 --batch_size 32 --learning_rate 0.01
+# Start the training script
+echo "Starting training..."
+python train_model_shell.py --data-path $DATA_PATH --X_DIM $X_DIM --Y_DIM $Y_DIM --T_DIM $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --num_workers $NUM_WORKERS
+echo "Training finished."
