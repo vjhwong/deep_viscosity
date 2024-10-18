@@ -93,6 +93,8 @@ def rename_videos(data_path: str, percentages: list[float]):
     for file in os.listdir(data_path):
         if "avi" in file:
             old_label = file.split("_", 1)
+            if '.' in old_label[0]:
+                old_label[0] = old_label[0].rstrip('0').rstrip('.')
             old_file_name = os.path.join(data_path, file)
             new_file_name = os.path.join(
                 data_path, old_name_to_new_name[old_label[0]] + old_label[1]
