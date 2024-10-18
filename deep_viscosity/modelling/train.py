@@ -13,16 +13,8 @@ from math import sqrt
 from modelling.modified_loss import WeightedMSELoss
 from modelling.utils.early_stopping import EarlyStopping
 
-def create_model_folder() -> None:
-    folder_name = "model"
-    # Check if the folder exists
-    if not os.path.exists(folder_name):
-        # Create the folder if it doesn't exist
-        os.makedirs(folder_name)
-        print(f"Folder '{folder_name}' created.")
 
 def create_run_folder(run_name: str) -> None:
-    create_model_folder()
     run_folder = os.path.join("models", f"{run_name}")
     if not os.path.exists(run_folder):
         os.makedirs(run_folder)
