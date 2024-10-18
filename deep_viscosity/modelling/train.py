@@ -46,7 +46,11 @@ def train(
         local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
         name=f"{run_name}_train.py",
         )
-
+    artifact.add_file(
+        local_path=os.path.join(os.getcwd(), "train_model.sh"),
+        name=f"{run_name}_train_model.sh"
+    )
+    wandb.log_artifact(artifact)
     early_stopping = EarlyStopping(patience=10, path=os.path.join("models", f"{run_name}.pth"), verbose=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -102,8 +106,8 @@ def train(
         early_stopping(val_loss, model)
         if early_stopping.early_stop:
             print("Early stopping")
-            print(f"Final train loss: {train_loss_values[-1]}")
-            print(f"Final validation loss: {val_loss_values[-1]}")
+            print(f"Best model train loss: {train_loss_values[val_loss_values.index(min(val_loss_values))]}")
+            print(f"Best model validation loss: {min(val_loss_values)}")
             plt.plot(range(epoch+1), train_loss_values, label="Training Loss")
             plt.plot(range(epoch+1), val_loss_values, label="Validation Loss")
             plt.xlabel("Epoch")
