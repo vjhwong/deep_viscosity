@@ -2,9 +2,11 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data.dataloader import DataLoader
-from modelling.model import CNN3DVisco
+from modelling.model import DeepViscosityModel
 import matplotlib.pyplot as plt
 from math import sqrt
+import numpy as np
+from modelling.modified_loss import WeightedMSELoss
 
 
 def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
@@ -16,7 +18,7 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
     """
     all_targets = []
     all_outputs = []
-    criterion = nn.MSELoss()
+    criterion = WeightedMSELoss()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
@@ -44,11 +46,17 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
     all_targets = torch.cat(all_targets).numpy()
     all_outputs = torch.cat(all_outputs).numpy()
 
-    # Create scatter plot
-    plt.figure(figsize=(10, 6))
-    plt.scatter(all_targets, all_outputs, alpha=0.5)
-    plt.xlabel("Targets")
-    plt.ylabel("Outputs")
-    plt.title("Scatter Plot of Targets vs Outputs")
-    plt.grid(True)
-    plt.show()
+    # Create a scatter plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.scatter(all_targets, all_outputs, alpha=0.5)
+    ax.set_xlabel("Targets")
+    ax.set_ylabel("Outputs")
+    ax.set_title("Scatter Plot of Targets vs Outputs")
+    ax.grid(True)
+    x_vals = np.linspace(min(all_targets), max(all_targets), 100)
+    y_vals = x_vals
+    ax.plot(x_vals, y_vals, color="red", linestyle="--", label="y = x")
+
+
+    # Return the figure instead of showing it
+    return fig
