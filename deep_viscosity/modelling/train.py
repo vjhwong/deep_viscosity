@@ -1,6 +1,4 @@
 import os
-import glob
-import shutil
 import torch
 import torch.utils.data
 import torch.nn as nn
@@ -12,19 +10,10 @@ from math import sqrt
 
 from modelling.modified_loss import WeightedMSELoss
 from modelling.utils.early_stopping import EarlyStopping
+from modelling.utils.functions import create_run_folder
 
 
-def create_run_folder(run_name: str) -> None:
-    run_folder = os.path.join("models", f"{run_name}")
-    if not os.path.exists(run_folder):
-        os.makedirs(run_folder)
 
-    slurm_files = glob.glob("slurm*")
-    for idx, slurm_file in enumerate(slurm_files, 1):
-        new_file_name = f"{run_name}_{idx}.out" if len(slurm_files) > 1 else f"{run_name}.out"
-        destination_path = os.path.join(run_folder, new_file_name)
-        shutil.move(slurm_file, destination_path)
-        print(f"Moved and renamed {slurm_file} to {destination_path}")
 
 def train(
     model: nn.Module,
