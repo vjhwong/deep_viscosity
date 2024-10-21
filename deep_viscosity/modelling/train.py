@@ -58,6 +58,10 @@ def train(
         name=f"{run_name}_model.py",
         )
     artifact.add_file(
+        local_path=os.path.join(os.getcwd(), "deep_viscosity", "modelling", "train.py"),
+        name=f"{run_name}_train.py",
+        )
+    artifact.add_file(
         local_path=os.path.join(os.getcwd(), "train_model.sh"),
         name=f"{run_name}_train_model.sh"
     )

@@ -32,16 +32,20 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         # fully connected layer hidden nodes
         self.fc_hidden1, self.fc_hidden2 = fc_hidden1, fc_hidden2
         #self.dropout = dropout
-        self.ch1, self.ch2 = 20, 40
-        self.k1, self.k2 = (5, 5, 5), (3, 3, 3)  # 3d kernel size
-        self.s1, self.s2 = (2, 2, 2), (2, 2, 2)  # 3d strides
-        self.pd1, self.pd2 = (0, 0, 0), (0, 0, 0)  # 3d padding
+        self.ch1, self.ch2, self.ch3 = 20, 40, 60
+        self.k1, self.k2, self.k3 = (3, 3, 3), (3, 3, 3), (3, 3, 3)  # 3d kernel size
+        self.s1, self.s2, self.s3 = (2, 2, 2), (2, 2, 2), (2, 2, 2)  # 3d strides
+        self.pd1, self.pd2, self.pd3 = (0, 0, 0), (0, 0, 0), (0, 0, 0)  # 3d padding
         # Compute conv1 & conv2 output shape
         self.conv1_outshape = f.conv3d_output_size(
             (self.t_dim, self.img_x, self.img_y), self.pd1, self.k1, self.s1
         )
         self.conv2_outshape = f.conv3d_output_size(
             self.conv1_outshape, self.pd2, self.k2, self.s2
+        )
+
+        self.conv3_outshape = f.conv3d_output_size(
+            self.conv2_outshape, self.pd3, self.k3, self.s3
         )
 
         self.conv1 = nn.Conv3d(
@@ -59,15 +63,23 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s2,
             padding=self.pd2,
         )
+
+        self.conv3 = nn.Conv3d(
+            in_channels=self.ch2,
+            out_channels=self.ch3,
+            kernel_size=self.k3,
+            stride=self.s3,
+            padding=self.pd3,
+        )
         #self.bn2 = nn.BatchNorm3d(self.ch2)
         self.leakyrelu = nn.LeakyReLU(inplace=True)
         #self.drop = nn.Dropout3d(self.dropout)
         # fully connected hidden layer
         self.fc1 = nn.Linear(
-            self.ch2
-            * self.conv2_outshape[0]
-            * self.conv2_outshape[1]
-            * self.conv2_outshape[2],
+            self.ch3
+            * self.conv3_outshape[0]
+            * self.conv3_outshape[1]
+            * self.conv3_outshape[2],
             self.fc_hidden1,
         )
         self.fc2 = nn.Linear(self.fc_hidden1, self.fc_hidden2)
@@ -93,6 +105,9 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         # Conv 2
         x_out = self.conv2(x_out)
         #x_out = self.bn2(x_out)
+        x_out = self.leakyrelu(x_out)
+
+        x_out = self.conv3(x_out)
         x_out = self.leakyrelu(x_out)
         # x_out = self.pool(x_out)
         #x_out = self.drop(x_out)
