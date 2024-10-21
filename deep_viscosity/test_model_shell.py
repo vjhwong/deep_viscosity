@@ -19,10 +19,13 @@ def set_seed(seed: int) -> None:
 
 
 def main() -> None:
-    set_seed(42)
 
     parser = argparse.ArgumentParser(
         description="Test a 3D CNN model for viscosity prediction."
+    )
+
+    parser.add_argument(
+        "--random_seed", type=int, help="Random seed"
     )
 
     parser.add_argument(
@@ -70,6 +73,7 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    set_seed(args.random_seed)
 
     # Save slurm output
     slurm_files = glob.glob("slurm*")
@@ -80,7 +84,7 @@ def main() -> None:
 
     # Load dataset
     train_loader, test_loader, val_loader = create_dataloaders(
-        args.batch_size, args.data_path, args.test_size, args.val_size, args.num_workers
+        args.batch_size, args.data_path, args.random_seed, args.test_size, args.val_size, args.num_workers
     )
 
     # Initialize model
@@ -91,7 +95,7 @@ def main() -> None:
     model.eval()    
 
     # Train model
-    figure = test(model, test_loader)
+    figure = test(model, test_loader, train_loader, val_loader, plot_all=True)
     figure.savefig(args.model_path.split(".")[0] + "_testplot.png")
 
 if __name__ == "__main__":
