@@ -21,6 +21,7 @@ def train(
     val_loader: torch.utils.data.DataLoader,
     learning_rate: float,
     num_epochs: int,
+    patiance: int,
 ) -> None:
     """Train the model using the given data loader and hyperparameters.
 
@@ -29,6 +30,7 @@ def train(
         train_loader (torch.utils.data.DataLoader): The data loader to use for training.
         learning_rate (float): The learning rate to use for training.
         num_epochs (int): The number of epochs to train for.
+        patience (int): The patience for early stopping
     """
     wandb.init(
         project="DeppViscosity",
@@ -55,7 +57,7 @@ def train(
         name=f"{run_name}_train_model.sh"
     )
     wandb.log_artifact(artifact)
-    early_stopping = EarlyStopping(patience=10, path=os.path.join("models", f"{run_name}",f"{run_name}.pth"), verbose=True)
+    early_stopping = EarlyStopping(patience=patiance, path=os.path.join("models", f"{run_name}",f"{run_name}.pth"), verbose=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 

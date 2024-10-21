@@ -73,6 +73,13 @@ def main() -> None:
         help="Number of workers to use for loading the data",
     )
 
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=10,
+        help="Patience for early stopping",
+    )
+
     args = parser.parse_args()
     set_seed(args.random_seed)
 
@@ -85,7 +92,7 @@ def main() -> None:
     model = DeepViscosityModel(args.t_dim, args.x_dim, args.y_dim)
 
     # Train model
-    train(model, train_loader, val_loader, args.learning_rate, args.num_epochs)
+    train(model, train_loader, val_loader, args.learning_rate, args.num_epochs, args.patience)
 
 
 if __name__ == "__main__":
