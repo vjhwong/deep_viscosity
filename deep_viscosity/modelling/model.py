@@ -5,15 +5,12 @@ import torch.nn.functional as func
 import modelling.utils.functions as f
 
 
-class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
+class DeepViscosityModel(nn.Module):
     def __init__(
         self,
         t_dim: int,
         img_x: int,
         img_y: int,
-        # dropout: float = 0.1,
-        fc_hidden1: int = 256,
-        fc_hidden2: int = 100,
     ) -> None:
         """Create a 3D CNN model for predicting viscosity.
 
@@ -21,37 +18,35 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             t_dim (int): Frame dimension.
             img_x (int): Resolution in x.
             img_y (int): Resolution in y.
-            dropout (float): Dropout rate. Defaults to 0.
-            fc_hidden1 (int, optional): Number of nodes in first fully-connected layer. Defaults to 256.
-            fc_hidden2 (int, optional): Number of nodes in first fully-connected layer. Defaults to 256.
         """
         super().__init__()
-        # set video dimension
+
+        # set dimensions
         self.t_dim = t_dim
         self.img_x = img_x
         self.img_y = img_y
-        # fully connected layer hidden nodes
-        self.fc_hidden1, self.fc_hidden2 = fc_hidden1, fc_hidden2
-        # self.dropout = dropout
+
+        # convolutional layers, kernel size, stride & padding
         self.ch1, self.ch2, self.ch3 = 20, 40, 60
         self.k1, self.k2, self.k3 = (
-            3, 3, 3), (3, 3, 3), (3, 3, 3)  # 3d kernel size
+            3, 3, 3), (3, 3, 3), (3, 3, 3)
         self.s1, self.s2, self.s3 = (
-            2, 2, 2), (2, 2, 2), (2, 2, 2)  # 3d strides
+            2, 2, 2), (2, 2, 2), (2, 2, 2)
         self.pd1, self.pd2, self.pd3 = (
-            0, 0, 0), (0, 0, 0), (0, 0, 0)  # 3d padding
-        # Compute conv1 & conv2 output shape
+            0, 0, 0), (0, 0, 0), (0, 0, 0)
+        
+        # output shape of convolutional layers
         self.conv1_outshape = f.conv3d_output_size(
             (self.t_dim, self.img_x, self.img_y), self.pd1, self.k1, self.s1
         )
         self.conv2_outshape = f.conv3d_output_size(
             self.conv1_outshape, self.pd2, self.k2, self.s2
         )
-
         self.conv3_outshape = f.conv3d_output_size(
             self.conv2_outshape, self.pd3, self.k3, self.s3
         )
 
+        # convolutional layers
         self.conv1 = nn.Conv3d(
             in_channels=1,
             out_channels=self.ch1,
@@ -59,7 +54,6 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s1,
             padding=self.pd1,
         )
-        # self.bn1 = nn.BatchNorm3d(self.ch1)
         self.conv2 = nn.Conv3d(
             in_channels=self.ch1,
             out_channels=self.ch2,
@@ -67,7 +61,6 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s2,
             padding=self.pd2,
         )
-
         self.conv3 = nn.Conv3d(
             in_channels=self.ch2,
             out_channels=self.ch3,
@@ -75,10 +68,11 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             stride=self.s3,
             padding=self.pd3,
         )
-        # self.bn2 = nn.BatchNorm3d(self.ch2)
-        self.leakyrelu = nn.LeakyReLU(inplace=True)
-        # self.drop = nn.Dropout3d(self.dropout)
-        # fully connected hidden layer
+
+        # fully connected layers
+        fc_hidden1, fc_hidden2 = 256, 100
+        self.fc_hidden1, self.fc_hidden2 = fc_hidden1, fc_hidden2
+
         self.fc1 = nn.Linear(
             self.ch3
             * self.conv3_outshape[0]
@@ -87,9 +81,11 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
             self.fc_hidden1,
         )
         self.fc2 = nn.Linear(self.fc_hidden1, self.fc_hidden2)
-        # fully connected layer, output = multi-classes
         self.fc3 = nn.Linear(self.fc_hidden2, 1)
         nn.init.constant_(self.fc3.bias, 470)
+
+        # leaky ReLu activation function
+        self.leakyrelu = nn.LeakyReLU(inplace=True)
 
     def forward(self, x_3d: torch.Tensor) -> torch.Tensor:
         """Forward pass.
@@ -100,30 +96,25 @@ class DeepViscosityModel(nn.Module):  # här nere får vi ändra sen
         Returns:
             torch.Tensor: Output tensor.
         """
-        # Conv 1
+
+        # convolutional layer 1
         x_out = self.conv1(x_3d)
-        # x_out = self.bn1(x_out)
-        x_out = self.leakyrelu(x_out)
-        # x_out = self.pool(x_out)
-        # x_out = self.drop(x_out)
-        # Conv 2
-        x_out = self.conv2(x_out)
-        # x_out = self.bn2(x_out)
         x_out = self.leakyrelu(x_out)
 
+        # convolutional layer 2
+        x_out = self.conv2(x_out)
+        x_out = self.leakyrelu(x_out)
+
+        # convolutional layer 3
         x_out = self.conv3(x_out)
         x_out = self.leakyrelu(x_out)
-        # x_out = self.pool(x_out)
-        # x_out = self.drop(x_out)
-        # flatten the conv2 to feed to fc layers
+
+        # flatten
         x_out = x_out.view(x_out.size(0), -1)
 
-        # FC 1 and 2
+        # fully connected layers
         x_out = func.leaky_relu(self.fc1(x_out))
         x_out = func.leaky_relu(self.fc2(x_out))
-
-        # removes neurons randomly while training
-        # x_out = func.dropout(x_out, p=self.dropout, training=self.training)
 
         x_out = self.fc3(x_out)
         return x_out
