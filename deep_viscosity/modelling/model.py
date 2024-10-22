@@ -29,12 +29,15 @@ class DeepViscosityModel(nn.Module):
         # convolutional layers, kernel size, stride & padding
         self.ch1, self.ch2, self.ch3 = 20, 40, 60
         self.k1, self.k2, self.k3 = (
-            3, 3, 3), (3, 3, 3), (3, 3, 3)
+            (3, 3, 3), (3, 3, 3), (3, 3, 3)
+        )
         self.s1, self.s2, self.s3 = (
-            2, 2, 2), (2, 2, 2), (2, 2, 2)
+            (2, 2, 2), (2, 2, 2), (2, 2, 2)
+        )
         self.pd1, self.pd2, self.pd3 = (
-            0, 0, 0), (0, 0, 0), (0, 0, 0)
-        
+            (0, 0, 0), (0, 0, 0), (0, 0, 0)
+        )
+
         # output shape of convolutional layers
         self.conv1_outshape = f.conv3d_output_size(
             (self.t_dim, self.img_x, self.img_y), self.pd1, self.k1, self.s1
@@ -82,9 +85,9 @@ class DeepViscosityModel(nn.Module):
         )
         self.fc2 = nn.Linear(self.fc_hidden1, self.fc_hidden2)
         self.fc3 = nn.Linear(self.fc_hidden2, 1)
+        # initialize the bias to the mid point of the data range
         nn.init.constant_(self.fc3.bias, 470)
 
-        # leaky ReLu activation function
         self.leakyrelu = nn.LeakyReLU(inplace=True)
 
     def forward(self, x_3d: torch.Tensor) -> torch.Tensor:
