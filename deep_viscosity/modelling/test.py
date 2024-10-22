@@ -1,12 +1,12 @@
-import torch
-import torch.nn as nn
-from tqdm import tqdm
-from torch.utils.data.dataloader import DataLoader
-from modelling.model import DeepViscosityModel
-import matplotlib.pyplot as plt
 from math import sqrt
+
 import numpy as np
-from modelling.modified_loss import WeightedMSELoss
+import matplotlib.pyplot as plt
+import torch
+from torch.utils.data.dataloader import DataLoader
+from tqdm import tqdm
+
+from modelling.utils.equalizedmseloss import EqualizedMSELoss
 
 
 def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoader, val_loader: DataLoader, plot_all: bool) -> None:
@@ -19,7 +19,9 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
         val_loader (DataLoader): DataLoader for the test set
         plot_all: (bool): Determines if the training and validation data should be included in the prediction plot.
     """
-    criterion = WeightedMSELoss()
+    all_targets = []
+    all_outputs = []
+    criterion = EqualizedMSELoss()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
@@ -65,7 +67,6 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
         val_targets = torch.cat(val_targets).numpy()
         val_outputs = torch.cat(val_outputs).numpy()
 
-    # Create a scatter plot
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(test_targets, test_outputs, alpha=0.5, color='blue', label='Test predictions')
     if plot_all:
@@ -85,6 +86,4 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
     ax.legend()
 
 
-
-    # Return the figure instead of showing it
     return fig

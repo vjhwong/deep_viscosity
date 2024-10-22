@@ -9,6 +9,9 @@ def get_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(description="Preprocess a video dataset")
     parser.add_argument(
+        "--raw_data_path", type=str, help="Path to raw data (video files)"
+    )
+    parser.add_argument(
         "--first_frame", type=int, help="Lower bound for the frame selection"
     )
     parser.add_argument(
@@ -26,5 +29,4 @@ def get_args() -> argparse.Namespace:
         help="The weight percentages of the glycerol solutions in the videos",
     )
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
