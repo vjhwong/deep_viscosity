@@ -72,58 +72,12 @@ def find_interpolated_viscosities(desired_percentages: list[float]) -> tuple[lis
     Returns:
         tuple[list[int]]: A tuple with a list of percentage values and a list of corresponding viscosities
     """
-    known_percentages = [
-        0,
-        10,
-        20,
-        30,
-        40,
-        50,
-        60,
-        65,
-        67,
-        70,
-        75,
-        80,
-        85,
-        90,
-        91,
-        92,
-        93,
-        94,
-        95,
-        96,
-        97,
-        98,
-        99,
-        100,
-    ]
-    known_viscosities = [
-        1.005,
-        1.31,
-        1.76,
-        2.60,
-        3.72,
-        6.00,
-        10.8,
-        15.2,
-        17.7,
-        22.5,
-        35.5,
-        60.1,
-        109,
-        219,
-        259,
-        310,
-        367,
-        437,
-        523,
-        624,
-        765,
-        939,
-        1150,
-        1412,
-    ]
+    known_percentages = np.load(os.path.join(
+        "vectors", "known_percentages.npy"
+    ))
+    known_viscosities = np.load(os.path.join(
+        "vectors", "known_viscosities.npy"
+    ))
 
     desired_percentages = list(map(lambda x: x * 100, desired_percentages))
 
