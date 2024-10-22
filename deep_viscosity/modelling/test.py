@@ -40,7 +40,7 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
             test_outputs.append(outputs.cpu())
     print(f"This is the target:{targets} and this is the true: {outputs}")
     avg_test_loss = test_loss / len(test_loader)
-    print(f"Test Loss (MSE): {avg_test_loss:.4f}")
+    print(f"Test Loss (RMSE): {avg_test_loss:.4f}")
     test_targets = torch.cat(test_targets).numpy()
     test_outputs = torch.cat(test_outputs).numpy()
 
