@@ -6,8 +6,8 @@ from torch.utils.data.dataloader import DataLoader
 from sklearn.model_selection import train_test_split
 
 from preprocessing.dataset import DeepViscosityDataset
-from preprocessing.utils.transforms import transform
 from preprocessing.utils.enums import ViscosityClass
+from preprocessing.utils.transforms import transform
 
 
 def create_dataloaders(

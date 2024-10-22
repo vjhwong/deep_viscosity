@@ -26,7 +26,7 @@ class DeepViscosityDataset(Dataset):
         self.folder_list = folder_list
         self.transform = transform
 
-    def __len__(self):
+    def __len__(self) -> int:
         "Denotes the total number of samples."
         return len(self.folder_list)
 
