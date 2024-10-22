@@ -1,12 +1,12 @@
-import torch
-import torch.nn as nn
-from tqdm import tqdm
-from torch.utils.data.dataloader import DataLoader
-from modelling.model import DeepViscosityModel
-import matplotlib.pyplot as plt
 from math import sqrt
+
 import numpy as np
-from modelling.modified_loss import WeightedMSELoss
+import matplotlib.pyplot as plt
+import torch
+from torch.utils.data.dataloader import DataLoader
+from tqdm import tqdm
+
+from deep_viscosity.modelling.utils.equalizedmseloss import EqualizedMSELoss
 
 
 def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
@@ -18,7 +18,7 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
     """
     all_targets = []
     all_outputs = []
-    criterion = WeightedMSELoss()
+    criterion = EqualizedMSELoss()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
@@ -46,7 +46,6 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
     all_targets = torch.cat(all_targets).numpy()
     all_outputs = torch.cat(all_outputs).numpy()
 
-    # Create a scatter plot
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.scatter(all_targets, all_outputs, alpha=0.5)
     ax.set_xlabel("Targets")
@@ -57,6 +56,4 @@ def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
     y_vals = x_vals
     ax.plot(x_vals, y_vals, color="red", linestyle="--", label="y = x")
 
-
-    # Return the figure instead of showing it
     return fig
