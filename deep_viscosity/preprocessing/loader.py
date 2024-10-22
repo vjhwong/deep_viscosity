@@ -13,6 +13,7 @@ from preprocessing.utils.transforms import transform
 def create_dataloaders(
     batch_size: int,
     processed_data_path: str,
+    seed: int,
     validation_size: float = 0.2,
     test_size: float = 0.1,
     num_workers: int = 0,
@@ -25,6 +26,7 @@ def create_dataloaders(
         processed_data_path (str): path to processed folder.
         validation_size (float, optional): validation size. Defaults to 0.2.
         test_size (float, optional): test size. Defaults to 0.2.
+        seed (int): a random seed.
     """
     # Initialize an empty list to store the data
     viscosity_data = []
@@ -49,13 +51,13 @@ def create_dataloaders(
         unique_viscosity_df,
         test_size=test_size,
         stratify=unique_viscosity_df["classification"],
-        random_state=42,
+        random_state=seed,
     )
     train_viscosities, val_viscosities = train_test_split(
         temp_df,
         test_size=validation_size,
         stratify=temp_df["classification"],
-        random_state=42,
+        random_state=seed,
     )
 
     train_folders = viscosity_df[

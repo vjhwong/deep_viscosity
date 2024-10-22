@@ -20,6 +20,7 @@ def train(
     val_loader: torch.utils.data.DataLoader,
     learning_rate: float,
     num_epochs: int,
+    patience: int,
 ) -> None:
     """Train the model using the given data loader and hyperparameters.
 
@@ -28,6 +29,7 @@ def train(
         train_loader (torch.utils.data.DataLoader): The data loader to use for training.
         learning_rate (float): The learning rate to use for training.
         num_epochs (int): The number of epochs to train for.
+        patience (int): The patience for early stopping
     """
     wandb.init(
         project="DeppViscosity",
@@ -57,12 +59,11 @@ def train(
         name=f"{run_name}_train_model.sh"
     )
     wandb.log_artifact(artifact)
-
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-
-    early_stopping = EarlyStopping(patience=10, path=os.path.join(
-        "models", f"{run_name}", f"{run_name}.pth"), verbose=True)
+    
+    early_stopping = EarlyStopping(patience=patience, path=os.path.join("models", f"{run_name}",f"{run_name}.pth"), verbose=True)
     criterion = EqualizedMSELoss()
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(

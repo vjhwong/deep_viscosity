@@ -14,15 +14,17 @@ source venv/bin/activate
 
 # Export environment variables (without spaces around '=')
 export DATA_PATH="/mimer/NOBACKUP/groups/naiss2024-22-1219/processed"
-export NUM_EPOCHS=50
+export NUM_EPOCHS=100
 export X_DIM=198
 export Y_DIM=195
 export T_DIM=55
 export BATCH_SIZE=32
 export LEARNING_RATE=0.001
 export NUM_WORKERS=4
+export RANDOM_SEED=8
+export PATIENCE=20
 
 # Start the training script
 echo "Starting training..."
-python deep_viscosity/train_model_shell.py --data_path $DATA_PATH --x_dim $X_DIM --y_dim $Y_DIM --t_dim $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --val_size 0.15 --test_size 0.15 --num_workers $NUM_WORKERS
+python deep_viscosity/train_model_shell.py --random_seed $RANDOM_SEED --data_path $DATA_PATH --x_dim $X_DIM --y_dim $Y_DIM --t_dim $T_DIM --num_epochs $NUM_EPOCHS --batch_size $BATCH_SIZE --learning_rate $LEARNING_RATE --val_size 0.15 --test_size 0.15 --num_workers $NUM_WORKERS --patience $PATIENCE
 echo "Training finished."

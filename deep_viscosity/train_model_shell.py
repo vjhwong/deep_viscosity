@@ -17,11 +17,15 @@ def set_seed(seed: int) -> None:
 
 
 def main() -> None:
-    set_seed(42)
 
     parser = argparse.ArgumentParser(
         description="Train a 3D CNN model for viscosity prediction."
     )
+
+    parser.add_argument(
+        "--random_seed", type=int, help="Random seed"
+    )
+
     parser.add_argument(
         "--data_path", type=str, help="Path to the dataset"
     )
@@ -69,18 +73,26 @@ def main() -> None:
         help="Number of workers to use for loading the data",
     )
 
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=10,
+        help="Patience for early stopping",
+    )
+
     args = parser.parse_args()
+    set_seed(args.random_seed)
 
     # Load dataset
     train_loader, test_loader, val_loader = create_dataloaders(
-        args.batch_size, args.data_path, args.test_size, args.val_size, args.num_workers
+        args.batch_size, args.data_path, args.random_seed, args.test_size, args.val_size, args.num_workers
     )
 
     # Initialize model
     model = DeepViscosityModel(args.t_dim, args.x_dim, args.y_dim)
 
     # Train model
-    train(model, train_loader, val_loader, args.learning_rate, args.num_epochs)
+    train(model, train_loader, val_loader, args.learning_rate, args.num_epochs, args.patience)
 
 
 if __name__ == "__main__":
