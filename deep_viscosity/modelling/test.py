@@ -19,8 +19,6 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
         val_loader (DataLoader): DataLoader for the test set
         plot_all: (bool): Determines if the training and validation data should be included in the prediction plot.
     """
-    all_targets = []
-    all_outputs = []
     criterion = EqualizedMSELoss()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -86,4 +84,4 @@ def test(model: torch.nn.Module, test_loader: DataLoader, train_loader: DataLoad
     ax.legend()
 
 
-    return fig
+    return (fig, test_targets, test_outputs)

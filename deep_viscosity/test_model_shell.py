@@ -95,8 +95,11 @@ def main() -> None:
     model.eval()    
 
     # Train model
-    figure = test(model, test_loader, train_loader, val_loader, plot_all=True)
+    (figure, test_targets, test_outputs) = test(model, test_loader, train_loader, val_loader, plot_all=True)
     figure.savefig(args.model_path.split(".")[0] + "_testplot.png")
+    np.save(args.model_path.split(".")[0] + "_testtargets", np.array(test_targets))
+    np.save(args.model_path.split(".")[0] + "_testpredictions", np.array(test_outputs))
+
 
 if __name__ == "__main__":
     main() 
