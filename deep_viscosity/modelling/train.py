@@ -9,7 +9,7 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from deep_viscosity.modelling.utils.equalizedmseloss import EqualizedMSELoss
+from modelling.utils.equalizedmseloss import EqualizedMSELoss
 from modelling.utils.early_stopping import EarlyStopping
 from modelling.utils.functions import create_run_folder
 

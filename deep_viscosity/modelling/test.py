@@ -6,7 +6,7 @@ import torch
 from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm
 
-from deep_viscosity.modelling.utils.equalizedmseloss import EqualizedMSELoss
+from modelling.utils.equalizedmseloss import EqualizedMSELoss
 
 
 def test(model: torch.nn.Module, test_loader: DataLoader) -> None:
