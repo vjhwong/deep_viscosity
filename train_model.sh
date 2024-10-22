@@ -14,7 +14,7 @@ source venv/bin/activate
 
 # Export environment variables (without spaces around '=')
 export DATA_PATH="/mimer/NOBACKUP/groups/naiss2024-22-1219/processed"
-export NUM_EPOCHS=50
+export NUM_EPOCHS=100
 export X_DIM=198
 export Y_DIM=195
 export T_DIM=55
