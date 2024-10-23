@@ -31,6 +31,7 @@ def plot_data():
     plt.scatter(test_viscosities, test_predictions, label='3D CNN Model', color='red', alpha = 0.3, edgecolors='none')
 
     # Add labels and title
+    plt.title('Predictions by the Model and by Humans')
     plt.xlabel('True Viscosities')
     plt.ylabel('Predictions')
     plt.legend()

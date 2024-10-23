@@ -1,5 +1,13 @@
 # Deep Learning for Viscosity Estimations
-This repository contains the code for the Deep Viscosity Project. The project aims at creating a 3D convolutional neural network that can predict viscosities of fluids based on video data of teh fluid in question. 
+This repository contains the code for the Deep Viscosity Project. The project aims to create a 3D convolutional neural network that can predict the viscosities of fluids based on video data of the fluid in question. 
+
+# Data
+The data was collected using a robotic arm and web camera, both controlled by a Python script. The data consists of 50 different viscosities, each one recorded 19 times, yielding a total of 950 videos.  
+Below are examples of the lowest and highest viscosity data that we collected
+
+Lowest viscosity (1.0 cp)             |  Highest viscosity (939 cp)
+:-------------------------:|:-------------------------:
+![](assets/0_3.gif)  |  ![](assets/98_19.gif)
 
 ## Setting up a virtual environment
 To create a Conda environment using the `environment.yml` file in this repository, follow these steps:
