@@ -27,12 +27,12 @@ To create a Conda environment using the `environment.yml` file in this repositor
     conda activate deep_viscosity
     ```
 
-You have now successfully created and activated the Conda environment using the `environment.yml` file.
+You have successfully created and activated the Conda environment using the `environment.yml` file.
 
 
 ## Preprocessing the data
 ### The data
-All raw data should be avi files stored in the `data/raw` folder. These videos need to be named according to the following convention: 
+These videos need to be named according to the following convention: 
 *(percentage of glycerol)_(test number).avi*
 
 The allowed values for the percentages of glycerol can be found in the file `deep_viscosity/preprocessing/rename_data_files.py`.
@@ -44,7 +44,7 @@ To preprocess the data one should run the file `deep_viscosity/preprocessing/pre
 Due to GPU requirements, the model was trained on an HPC cluster. However, it can also be trained via the command line using `deep_viscosity/train_model_shell.py`. 
 
 ## Inference
-Run the `deep_viscosity/inference.py` script via the command line with the required arguments to get a viscosity estimation from the trained model. 
+Run the `deep_viscosity/inference.py` script from the command line with the required arguments to estimate the viscosity of the trained model. 
 
 
 
