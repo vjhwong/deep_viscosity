@@ -4,9 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_data():
+def plot_data(only_test_visc: bool = False):
     """
     Creates a plot showing the human predictions along with the model predictions on the test set.
+
+    Args:
+        only_test_vist (bool): determines if all human predictions should be plottd or only the test viscosities
     """
 
     # Load the data for the plots
@@ -21,6 +24,30 @@ def plot_data():
     test_predictions = np.load(
         "models/expert-wildflower-177/expert-wildflower-177_testpredictions.npy"
     )
+
+    if only_test_visc:
+        # Find only human predictions for test viscosities
+        unique_viscosities = list(
+            map(lambda x: round(float(x), 2), np.unique(test_viscosities))
+        )
+        human_predictions = [
+            p1_predictions,
+            p2_predictions,
+            p3_predictions,
+            p4_predictions,
+        ]
+        desired_human_predictions = [[] for _ in range(4)]
+        for human_prediction, desired_human_prediction in zip(
+            human_predictions, desired_human_predictions
+        ):
+            for visc, pred in zip(true_viscosities, human_prediction):
+                if visc in unique_viscosities:
+                    desired_human_prediction.append(pred)
+        true_viscosities = unique_viscosities
+        p1_predictions = desired_human_predictions[0]
+        p2_predictions = desired_human_predictions[1]
+        p3_predictions = desired_human_predictions[2]
+        p4_predictions = desired_human_predictions[3]
 
     # Create the plot
     plt.figure(figsize=(10, 6))
@@ -91,7 +118,7 @@ def plot_data():
 
 
 def main():
-    plot_data()
+    plot_data(only_test_visc=True)
 
 
 if __name__ == "__main__":
