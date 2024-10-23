@@ -7,7 +7,7 @@ Below are examples of the lowest and highest viscosity data that we collected
 
 Lowest viscosity (1.0 cp)             |  Highest viscosity (939 cp)
 :-------------------------:|:-------------------------:
-![](assets/0_3.gif)  |  ![](assets/98_19.gif)
+![](assets/0.gif)  |  ![](assets/98.gif)
 
 ## Setting up a virtual environment
 To create a Conda environment using the `environment.yml` file in this repository, follow these steps:
