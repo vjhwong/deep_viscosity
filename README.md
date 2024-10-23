@@ -1,7 +1,7 @@
 # Deep Learning for Viscosity Estimations
 This repository contains the code for the Deep Viscosity Project. The project aims to create a 3D convolutional neural network that can predict the viscosities of fluids based on video data of the fluid in question. 
 
-# Data
+## Data
 The data was collected using a robotic arm and web camera, both controlled by a Python script. The data consists of 50 different viscosities, each one recorded 19 times, yielding a total of 950 videos.  
 Below are examples of the lowest and highest viscosity data that we collected
 
@@ -37,7 +37,14 @@ All raw data should be avi files stored in the `data/raw` folder. These videos n
 
 The allowed values for the percentages of glycerol can be found in the file `deep_viscosity/preprocessing/rename_data_files.py`.
 ### Preprocessing
-To preprocess the data one should run the file `deep_viscosity/preprocessing/preprocessing.py`. Arguments must be passed to this script which should be done via the command line. The required arguments can be found in the file `deep_viscosity/preprocessing/utils/preprocess_args.py`. The exact command used for the preprocessing can be found in `deep_viscosity/arguments/preprocessing.txt`
+To preprocess the data one should run the file `deep_viscosity/preprocessing/preprocessing.py`. Arguments must be passed to this script which should be done via the command line. The required arguments can be found in the file `deep_viscosity/preprocessing/utils/preprocess_args.py`. The exact command used for the preprocessing can be found in `deep_viscosity/preprocessing/arguments/preprocessing.txt`.
+
+
+## Training
+Due to GPU requirements, the model was trained on an HPC cluster. However, it can also be trained via the command line using `deep_viscosity/train_model_shell.py`. 
+
+## Inference
+Run the `deep_viscosity/inference.py` script via the command line with the required arguments to get a viscosity estimation from the trained model. 
 
 
 
