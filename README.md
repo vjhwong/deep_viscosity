@@ -40,7 +40,7 @@ The allowed values for the percentages of glycerol can be found in the file `dee
 To preprocess the data one should run the file `deep_viscosity/preprocessing/preprocessing.py`. Arguments must be passed to this script which should be done via the command line. The required arguments can be found in the file `deep_viscosity/preprocessing/utils/preprocess_args.py`. The exact command used for the preprocessing can be found in `deep_viscosity/preprocessing/arguments/preprocessing.txt`.
 
 Below is an example of a video before preprocessing and a video stitched together of the frames after preprocessing. 
-Before preprocessing (1.0 cp)             |  After preprocessing (1 cp)
+Before preprocessing (1.0 cp)             |  After preprocessing (1.0 cp)
 :-------------------------:|:-------------------------:
 ![](assets/0.gif)  |  ![](assets/0_preprocessed.gif)
 
