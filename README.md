@@ -49,7 +49,7 @@ Before preprocessing (1.0 cp)             |  After preprocessing (1.0 cp)
 Due to GPU requirements, the model was trained on an HPC cluster. However, it can also be trained via the command line using `deep_viscosity/train_model_shell.py`. 
 
 ## Inference
-Run the `deep_viscosity/inference.py` script from the command line with the required arguments to estimate the viscosity of the trained model. 
+Run the `deep_viscosity/inference.py` script from the command line with the required arguments. 
 
 
 
